@@ -1,0 +1,252 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #dcddde 0%, #dcddde 100%);
+}
+
+.login-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-logo img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  color: #333;
+  font-size: 28px;
+  font-weight: 100;
+  margin: 0;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 10px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #333;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.form-group label::after {
+  content: '';
+}
+
+.form-group label[for="email_address"]::after,
+.form-group label[for="password"]::after {
+  content: ' *';
+  color: #e53e3e;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px !important;
+  text-align: left !important;
+  letter-spacing: normal !important;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0158A4;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+}
+
+.password-toggle:hover {
+  color: #333;
+}
+
+.error-message {
+  background: #fee;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #fed7d7;
+}
+
+.verification-message {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #ffeaa7;
+}
+
+.verification-message p {
+  margin: 0 0 8px 0;
+}
+
+.resend-otp-btn {
+  background: #0158A4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.resend-otp-btn:hover {
+  background: #013d7a;
+}
+
+.login-btn {
+  background: transparent !important;
+  color: #0158A4 !important;
+  border: 2px solid #0158A4 !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: #0158A4 !important;
+  color: white !important;
+}
+
+.login-btn:disabled {
+  background: #a0aec0 !important;
+  color: white !important;
+  border: 2px solid #a0aec0 !important;
+  cursor: not-allowed;
+}
+
+.register-btn {
+  background: transparent !important;
+  color: #0158A4 !important;
+  border: 2px solid #0158A4 !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+  background: #0158A4 !important;
+  color: white !important;
+}
+
+
+.forgot-password-link {
+  background: transparent !important;
+  color: #666 !important;
+  border: none !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+  align-self: flex-end;
+}
+
+.forgot-password-link:hover {
+  color: #0158A4 !important;
+}
+
+/* Responsive cho tablet */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .login-card {
+    padding: 32px 24px;
+    max-width: 100%;
+  }
+
+  .login-header h1 {
+    font-size: 24px;
+  }
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 24px 20px;
+    border-radius: 8px;
+  }
+
+  .login-header h1 {
+    font-size: 22px;
+  }
+
+  .form-group input {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .login-btn {
+    padding: 16px;
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,151 @@
+.edit-vendor-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.edit-vendor-modal-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.edit-vendor-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.edit-vendor-modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.edit-vendor-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.edit-vendor-modal-close:hover {
+  color: #495057;
+}
+
+.edit-vendor-error {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .edit-vendor-modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .edit-vendor-modal-content {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    max-height: 95vh;
+    padding: 24px 20px;
+  }
+
+  .edit-vendor-modal-header {
+    margin-bottom: 20px;
+  }
+
+  .edit-vendor-modal-title {
+    font-size: 20px;
+  }
+
+  .edit-vendor-modal-close {
+    font-size: 28px;
+  }
+
+  /* Form styles inherit from AddVendorForm.css */
+  .vendor-form-group input {
+    font-size: 16px;
+    min-height: 48px;
+    padding: 14px 12px;
+  }
+
+  .vendor-form-group label {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .vendor-form-actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .vendor-submit-button,
+  .vendor-cancel-button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-vendor-modal-content {
+    padding: 20px 16px;
+    max-height: 98vh;
+  }
+
+  .edit-vendor-modal-title {
+    font-size: 18px;
+  }
+
+  .vendor-form-group input {
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px;
+    padding: 12px;
+  }
+
+  .vendor-form-group label {
+    font-size: 14px;
+  }
+
+  .vendor-submit-button,
+  .vendor-cancel-button {
+    min-height: 44px;
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+
+  .edit-vendor-error {
+    font-size: 13px;
+    padding: 10px;
+  }
+}

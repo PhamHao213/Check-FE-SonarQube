@@ -1,0 +1,241 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #dcddde 0%, #dcddde 100%);
+}
+
+.register-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 50px 10px;
+  overflow: hidden;
+}
+
+.register-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 95vh;
+  overflow-y: auto;
+  margin-top: 60px;
+}
+
+.register-logo {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.register-logo img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.register-header h1 {
+  color: #333;
+  font-size: 22px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.register-header p {
+  color: #666;
+  font-size: 12px;
+  margin: 0;
+  margin-top: 5px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  color: #333;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.form-group label::after {
+  content: '';
+}
+
+.form-group label[for="email_address"]::after,
+.form-group label[for="password"]::after,
+.form-group label[for="confirmPassword"]::after {
+  color: #e53e3e;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px !important;
+  text-align: left !important;
+  letter-spacing: normal !important;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0158A4;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+}
+
+.password-toggle:hover {
+  color: #333;
+}
+
+.error-message {
+  background: #fee;
+  color: #c53030;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid #fed7d7;
+}
+
+.email-exists-error {
+  color: #c53030;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.password-mismatch-error {
+  color: #c53030;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.password-requirements {
+  color: #c53030;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.register-btn {
+  background: #0158A4;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-btn:hover:not(:disabled) {
+  background: #013d7a;
+}
+
+.register-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+.back-login-btn {
+  background: transparent;
+  color: #0158A4;
+  border: 2px solid #0158A4;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-login-btn:hover {
+  background: #0158A4;
+  color: white;
+}
+
+/* Responsive cho tablet */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 16px;
+  }
+
+  .register-card {
+    padding: 32px 24px;
+    max-width: 100%;
+  }
+
+  .register-header h1 {
+    font-size: 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 480px) {
+  .register-container {
+    padding: 12px;
+  }
+
+  .register-card {
+    padding: 24px 20px;
+    border-radius: 8px;
+  }
+
+  .register-header h1 {
+    font-size: 22px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .register-btn {
+    padding: 16px;
+    font-size: 16px;
+  }
+}

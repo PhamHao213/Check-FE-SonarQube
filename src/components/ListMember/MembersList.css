@@ -1,0 +1,257 @@
+.members-container {
+  margin-top: 30px;
+}
+
+.members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.invite-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.invite-button:hover {
+  background: #0056b3;
+}
+
+.members-loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.no-members {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-members svg {
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.no-members p {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+}
+
+.invite-first-member-button {
+  padding: 12px 24px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.invite-first-member-button:hover {
+  background: #0056b3;
+}
+
+.members-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 120px;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.header-cell {
+  font-size: 14px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 120px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: background 0.2s;
+}
+
+.table-row:hover {
+  background: #f8f9fa;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.role-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.role-owner {
+  background: #dc3545;
+  color: white;
+}
+
+.role-admin {
+  background: #fd7e14;
+  color: white;
+}
+
+.role-staff {
+  background: #20c997;
+  color: white;
+}
+
+.role-cupper {
+  background: #6c757d;
+  color: white;
+}
+
+/* Member action buttons - specific styles */
+.member-action-buttons {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap !important;
+  overflow: hidden;
+}
+
+.member-action-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.member-edit-btn {
+  background: #007bff !important;
+  color: white !important;
+}
+
+.member-edit-btn:hover {
+  background: #0056b3 !important;
+}
+
+.member-remove-btn {
+  background: #dc3545 !important;
+  color: white !important;
+}
+
+.member-remove-btn:hover {
+  background: #c82333 !important;
+}
+
+@media (max-width: 768px) {
+  .members-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .header-left {
+    justify-content: center;
+  }
+
+  .invite-button {
+    justify-content: center;
+  }
+
+  .members-table {
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    display: block;
+    padding: 20px;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .table-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+  }
+
+  .table-cell:last-child {
+    border-bottom: none;
+  }
+
+  .table-cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+    min-width: 80px;
+  }
+
+  .member-action-buttons {
+    flex-direction: row !important;
+    justify-content: flex-end;
+    gap: 3px;
+    flex-wrap: nowrap;
+  }
+
+  .member-action-btn {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 4px !important;
+  }
+}

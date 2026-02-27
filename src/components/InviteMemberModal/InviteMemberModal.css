@@ -1,0 +1,301 @@
+/* Invite Member Modal - Specific Styles */
+.invite-member-modal {
+  width: 500px !important;
+  max-width: 90vw !important;
+  position: relative !important;
+  z-index: 1001 !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+/* Invite Form Specific Styles */
+.invite-member-modal .invite-form {
+  padding: 24px !important;
+  background: white !important;
+}
+
+.invite-member-modal .form-group {
+  margin-bottom: 20px !important;
+}
+
+.invite-member-modal .invite-form label {
+  display: block !important;
+  margin-bottom: 8px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+}
+
+/* Input and Select Specific Styles */
+.invite-member-modal .invite-form input,
+.invite-member-modal .invite-form select {
+  width: 100% !important;
+  padding: 12px 16px !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  background-color: white !important;
+  color: #374151 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+
+.invite-member-modal .invite-form select {
+  cursor: pointer !important;
+  min-height: 48px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.invite-member-modal .invite-form input:focus,
+.invite-member-modal .invite-form select:focus {
+  outline: none !important;
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1) !important;
+  background-color: #fafbfc !important;
+}
+
+.invite-member-modal .invite-form input::placeholder {
+  color: #9ca3af !important;
+  font-size: 14px !important;
+}
+
+/* Select Options Styling */
+.invite-member-modal .invite-form select option {
+  padding: 10px 16px !important;
+  background-color: white !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  border: none !important;
+  min-height: 40px !important;
+  line-height: 1.5 !important;
+}
+
+.invite-member-modal .invite-form select option:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.invite-member-modal .invite-form select option:checked {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+/* Override global mobile styles for this specific select */
+@media (max-width: 768px) {
+  .invite-form select {
+    font-size: 14px !important;
+    padding: 12px !important;
+    min-height: 44px !important;
+    height: auto !important;
+    border-radius: 6px !important;
+  }
+  
+  .invite-form select option {
+    font-size: 14px !important;
+    padding: 10px !important;
+  }
+}
+
+/* Specific override for invite modal select */
+.invite-member-modal select {
+  position: relative !important;
+  z-index: 1003 !important;
+  background: white !important;
+  border: 2px solid #e5e7eb !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  cursor: pointer !important;
+}
+
+.invite-member-modal select:focus {
+  z-index: 1004 !important;
+  border-color: #007bff !important;
+}
+
+/* Ensure dropdown menu is visible */
+.invite-member-modal select:focus option,
+.invite-member-modal select option {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: white !important;
+  color: #374151 !important;
+}
+
+
+
+/* Custom dropdown arrow - only down arrow */
+.invite-member-modal .form-group select {
+  background-color: white !important;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8"><path fill="%23666" d="M6 8L0 2h12z"/></svg>') !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 12px 8px !important;
+  padding-right: 40px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+/* Modal Header Styles */
+.invite-member-modal .modal-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  background: #f9fafb !important;
+}
+
+.invite-member-modal .modal-header h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+}
+
+.invite-member-modal .close-button {
+  background: none !important;
+  border: none !important;
+  font-size: 24px !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.invite-member-modal .close-button:hover {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+}
+
+/* Form Actions */
+.invite-member-modal .form-actions {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.invite-member-modal .cancel-button {
+  padding: 12px 24px !important;
+  border: 2px solid #d1d5db !important;
+  background: white !important;
+  color: #374151 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.invite-member-modal .cancel-button:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+.invite-member-modal .submit-button {
+  padding: 12px 24px !important;
+  border: none !important;
+  background: #007bff !important;
+  color: white !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.invite-member-modal .submit-button:hover:not(:disabled) {
+  background: #0056b3 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3) !important;
+}
+
+.invite-member-modal .submit-button:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Error Message */
+.invite-member-modal .error-message {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  margin-bottom: 20px !important;
+  border: 1px solid #fecaca !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  animation: fadeIn 0.3s ease-in !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal overlay specific for invite modal */
+.invite-member-modal .modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1000 !important;
+}
+
+/* Ensure select dropdown appears above modal */
+.invite-form .form-group {
+  position: relative !important;
+  z-index: 1002 !important;
+  overflow: visible !important;
+}
+
+/* Modal content should allow overflow for dropdown */
+.invite-member-modal .modal-content {
+  overflow: visible !important;
+}
+
+.invite-member-modal .invite-form {
+  overflow: visible !important;
+}
+
+/* Ensure modal overlay doesn't interfere */
+.modal-overlay {
+  overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  .invite-member-modal {
+    width: 95vw;
+    margin: 20px auto;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+}

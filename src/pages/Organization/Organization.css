@@ -1,0 +1,592 @@
+.organization-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.organization-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.organization-header .header-left {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  justify-content: center;
+}
+
+.organization-header .back-button {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid rgba(121, 121, 121, 0.3);
+  border-radius: 6px;
+  color: #797979;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.organization-header .back-button:hover {
+  background-color: rgba(121, 121, 121, 0.05);
+  border-color: #797979;
+}
+
+.organization-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.create-org-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #1F429B;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-org-button:hover {
+  background-color: #1a3a8a;
+}
+
+.organization-loading {
+  text-align: center;
+  padding: 48px;
+  color: #797979;
+}
+
+.organization-list {
+  width: 100%;
+}
+
+.organization-table {
+  background: white;
+  border: 1px solid rgba(121, 121, 121, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.organization-table .table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 2fr 1.2fr 1fr;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(121, 121, 121, 0.2);
+  gap: 8px;
+}
+
+.organization-table .header-cell {
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  border-right: 1px solid rgba(121, 121, 121, 0.1);
+}
+
+.organization-table .header-cell:last-child {
+  border-right: none;
+}
+
+.organization-table .table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 2fr 1.2fr 1fr;
+  border-bottom: 1px solid rgba(121, 121, 121, 0.1);
+  transition: background-color 0.2s;
+  gap: 8px;
+}
+
+.organization-table .table-row:hover {
+  background-color: rgba(31, 66, 155, 0.02);
+}
+
+.organization-table .table-row:last-child {
+  border-bottom: none;
+}
+
+.organization-table .table-cell {
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #333;
+  border-right: 1px solid rgba(121, 121, 121, 0.1);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.organization-table .table-cell:last-child {
+  border-right: none;
+}
+
+.cell-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.org-icon-small {
+  color: #1F429B;
+  flex-shrink: 0;
+}
+
+.organization-table .table-row.clickable {
+  cursor: pointer;
+}
+
+.organization-table .table-row.clickable:hover {
+  background-color: rgba(31, 66, 155, 0.05);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.role-badge {
+  padding: 8px 16px;
+  background-color: #1F429B;
+  color: white;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.role-badge-table {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  text-align: center;
+  width: fit-content;
+}
+
+.role-badge-table.role-owner {
+  background-color: #1F429B;
+  color: white;
+}
+
+.role-badge-table.role-admin {
+  background-color: #28a745;
+  color: white;
+}
+
+.role-badge-table.role-staff {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.role-badge-table.role-cupper {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Organization action buttons - specific styles */
+.org-action-buttons {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap !important;
+}
+
+.org-action-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  min-width: 85px;
+  height: 38px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.org-edit-btn {
+  background: #28a745 !important;
+  color: white !important;
+}
+
+.org-edit-btn:hover {
+  background: #218838 !important;
+}
+
+.org-delete-btn {
+  background: #dc3545 !important;
+  color: white !important;
+}
+
+.org-delete-btn:hover {
+  background: #c82333 !important;
+}
+
+.org-leave-btn {
+  background: #6c757d !important;
+  color: white !important;
+}
+
+.org-leave-btn:hover {
+  background: #5a6268 !important;
+}
+
+.org-detail-card {
+  background: white;
+  border: 1px solid rgba(121, 121, 121, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.org-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(121, 121, 121, 0.1);
+}
+
+.org-detail-header svg {
+  color: #1F429B;
+}
+
+.org-detail-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.org-detail-info {
+  display: grid;
+  gap: 16px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.info-row label {
+  font-weight: 600;
+  color: #797979;
+  font-size: 14px;
+}
+
+.info-row span {
+  color: #333;
+  font-size: 14px;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.no-organizations {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px;
+  color: #797979;
+}
+
+.no-organizations svg {
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.create-first-org-button {
+  margin-top: 16px;
+  padding: 12px 24px;
+  background-color: #1F429B;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-first-org-button:hover {
+  background-color: #1a3a8a;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(121, 121, 121, 0.2);
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #797979;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: rgba(121, 121, 121, 0.1);
+}
+
+.create-org-form {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(121, 121, 121, 0.3);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1F429B;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  border: 1px solid rgba(121, 121, 121, 0.3);
+  background: white;
+  color: #797979;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: rgba(121, 121, 121, 0.05);
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #1F429B;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #1a3a8a;
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .organization-container {
+    padding: 12px;
+  }
+
+  .organization-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .organization-header .header-left {
+    position: relative;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .organization-header .back-button {
+    position: absolute;
+    left: 0;
+    padding: 5px 10px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .organization-header h1 {
+    font-size: 20px;
+  }
+
+  .organization-table .table-header {
+    display: none;
+  }
+
+  .organization-table .table-row {
+    display: block;
+    border: 1px solid rgba(121, 121, 121, 0.2);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 16px;
+  }
+
+  .organization-table .table-cell {
+    display: block;
+    padding: 4px 0;
+    border: none;
+  }
+
+  .organization-table .table-cell:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #797979;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .cell-content {
+    margin-top: 4px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .header-right {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .org-action-buttons {
+    flex-direction: row !important;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .org-action-btn {
+    min-width: 75px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    height: 34px !important;
+    gap: 4px !important;
+  }
+
+  .role-badge {
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .org-detail-card {
+    padding: 12px;
+  }
+
+  .org-detail-header h2 {
+    font-size: 18px;
+    word-break: break-word;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .info-row label {
+    font-size: 13px;
+  }
+
+  .info-row span {
+    font-size: 14px;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+/* Đảm bảo các nút luôn nằm ngang */
+.header-right .org-action-buttons {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+.header-right .org-action-btn {
+  display: inline-flex !important;
+}

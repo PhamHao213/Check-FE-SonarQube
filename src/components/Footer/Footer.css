@@ -1,0 +1,15 @@
+.app-footer {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  background-color: #fafafa;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+}
+
+.app-footer strong {
+  color: #1F429B; /* hoặc màu brand của bạn */
+}
+

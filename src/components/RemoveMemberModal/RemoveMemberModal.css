@@ -1,0 +1,123 @@
+.remove-member-modal {
+  width: 500px;
+  max-width: 90vw;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body p {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+.member-info {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.member-info .info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.member-info .info-row:last-child {
+  margin-bottom: 0;
+}
+
+.member-info label {
+  font-weight: 600;
+  color: #666;
+}
+
+.member-info span {
+  color: #333;
+}
+
+.warning-note {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 20px 0;
+  color: #856404;
+  font-size: 14px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.remove-button {
+  padding: 10px 20px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.remove-button:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.remove-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.role-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.role-owner {
+  background: #dc3545;
+  color: white;
+}
+
+.role-admin {
+  background: #fd7e14;
+  color: white;
+}
+
+.role-staff {
+  background: #20c997;
+  color: white;
+}
+
+.role-cupper {
+  background: #6c757d;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .remove-member-modal {
+    width: 95vw;
+    margin: 20px auto;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .remove-button {
+    width: 100%;
+  }
+}
