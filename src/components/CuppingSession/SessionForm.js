@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import BatchSelector from '../BatchSelector';
 import { cuppingSessionApi } from '../../api/cuppingSessionApi';
@@ -21,22 +22,6 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
   const [showBatchSelector, setShowBatchSelector] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Mapping giữa giá trị tiếng Anh và tiếng Việt
-  const purposeMapping = {
-    'Check new green bean quality': 'Kiểm tra chất lượng nhân xanh mới',
-    'Check green bean quality': 'Kiểm tra chất lượng nhân xanh',
-    'Check roast batch quality': 'Kiểm tra chất lượng mẻ rang',
-    'Check finished product quality': 'Kiểm tra chất lượng thành phẩm'
-  };
-
-  // Mapping ngược từ tiếng Việt sang tiếng Anh
-  const reversePurposeMapping = {
-    'Kiểm tra chất lượng nhân xanh mới': 'Check new green bean quality',
-    'Kiểm tra chất lượng nhân xanh': 'Check green bean quality', 
-    'Kiểm tra chất lượng mẻ rang': 'Check roast batch quality',
-    'Kiểm tra chất lượng thành phẩm': 'Check finished product quality'
-  };
-
   const formatDateTimeVN = (datetimeLocal) => {
     if (!datetimeLocal) return '';
     const date = new Date(datetimeLocal);
@@ -50,6 +35,8 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
 
   // Tách logic xử lý session data
   const formatSessionData = () => {
+    if (!session) return {};
+    
     const formatDateTime = (dateStr) => {
       if (!dateStr) return '';
       const date = new Date(dateStr);
@@ -61,20 +48,20 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
       return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
     
-    const cuppingDate = formatDateTime(session.cupping_date);
-    const finishedDate = formatDateTime(session.finish_date || session.finished_date) || cuppingDate;
+    const cuppingDate = formatDateTime(session?.cupping_date);
+    const finishedDate = formatDateTime(session?.finish_date || session?.finished_date) || cuppingDate;
     
     return {
-      purpose: session.purpose || '',
-      description: session.description || '',
+      purpose: session?.purpose || '',
+      description: session?.description || '',
       startDate: cuppingDate,
       endDate: finishedDate,
-      typeOfSession: session.type_of_session || '',
+      typeOfSession: session?.type_of_session || '',
       sampleCount: '5',
-      isBlindCupping: session.is_blind_cupping || false,
-      scoreCardFormat: session.score_card_format === 'AffectiveScoreCard' ? 'Affective' : 
-                      session.score_card_format === 'DescriptiveScoreCard' ? 'DescriptiveScoreCard' :
-                      session.score_card_format || 'SCA'
+      isBlindCupping: session?.is_blind_cupping || false,
+      scoreCardFormat: session?.score_card_format === 'AffectiveScoreCard' ? 'Affective' : 
+                      session?.score_card_format === 'DescriptiveScoreCard' ? 'DescriptiveScoreCard' :
+                      session?.score_card_format || 'SCA'
     };
   };
 
@@ -103,6 +90,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
 
   // Tách logic load session batches
   const loadSessionBatches = async () => {
+    // eslint-disable-next-line react/prop-types
     const sessionId = session?.session_id || session?.uuid;
     if (!sessionId) return;
 
@@ -130,7 +118,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
       alert('Vui lòng chọn ít nhất 1 batch!');
       return false;
     }
-    if (parseInt(formData.sampleCount) > 5) {
+    if (Number.parseInt(formData.sampleCount) > 5) {
       alert('Số lượng mẫu thử nếm tối đa là 5!');
       return false;
     }
@@ -145,8 +133,9 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
   const createSessionData = () => {
     const newFinishDate = new Date(formData.endDate);
     const now = new Date();
-    const shouldReopenSession = session && session.is_finished && newFinishDate > now;
+    const shouldReopenSession = session?.is_finished && newFinishDate > now;
     
+    // eslint-disable-next-line react/prop-types
     const sessionData = {
       purpose: formData.purpose,
       description: formData.description,
@@ -155,14 +144,14 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
       type_of_session: formData.typeOfSession,
       is_blind_cupping: formData.isBlindCupping,
       score_card_format: formData.scoreCardFormat === 'Affective' ? 'AffectiveScoreCard' : formData.scoreCardFormat,
-      is_started: session ? session.is_started : false,
-      is_finished: shouldReopenSession ? false : (session ? session.is_finished : false)
+      is_started: session?.is_started || false,
+      is_finished: shouldReopenSession ? false : (session?.is_finished || false)
     };
 
     if (selectedBatches.length > 0) {
       sessionData.batches = selectedBatches.map(batch => ({
         batch_id: batch.uuid || batch.gb_batch_id,
-        number_of_sample_cup: parseInt(formData.sampleCount)
+        number_of_sample_cup: Number.parseInt(formData.sampleCount)
       }));
     }
 
@@ -176,7 +165,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
     if (selectedBatches.length > 0) {
       const batchesData = selectedBatches.map(batch => ({
         batch_id: batch.uuid || batch.gb_batch_id,
-        number_of_sample_cup: parseInt(formData.sampleCount)
+        number_of_sample_cup: Number.parseInt(formData.sampleCount)
       }));
       await cuppingSessionApi.updateSessionBatches(sessionId, batchesData);
     }
@@ -259,7 +248,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
   // Tách logic điều hướng
   const navigateToCuppingForm = (newSessionId) => {
     const currentPath = window.location.pathname;
-    const prefix = currentPath.startsWith('/org/') ? currentPath.match(/^\/org\/[^\/]+/)[0] : '/personal';
+    const prefix = currentPath.startsWith('/org/') ? currentPath.match(/^\/org\/[^/]+/)[0] : '/personal';
     const targetUrl = `${prefix}/sessionlist/${newSessionId}/cupping_score_card`;
     
     if (window.goToCuppingForm) {
@@ -330,6 +319,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
       const sessionData = createSessionData();
 
       if (session) {
+        // eslint-disable-next-line react/prop-types
         const sessionId = session.session_id || session.uuid;
         await handleUpdateSession(sessionData, sessionId);
         handleSubmitSuccess();
@@ -369,6 +359,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
   };
 
   const getScoreCardStyle = () => {
+    // eslint-disable-next-line react/prop-types
     const baseStyle = {
       cursor: (session?.is_started && !session?.is_finished) ? 'not-allowed' : 'pointer',
       opacity: (session?.is_started && !session?.is_finished) ? 0.6 : 1,
@@ -399,14 +390,26 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
     }
   };
 
+  const getSubmitButtonText = () => {
+    if (loading) return t("auto.dang_luu");
+    if (session) return t("auto.cp_nht_445");
+    return t("auto.tao_moi");
+  };
+
   return (
     <div 
       className="session-edit-overlay"
       onClick={handleOverlayClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Escape' && handleOverlayClick(e)}
+      aria-label="Close modal overlay"
     >
       <div 
         className="session-edit-modal"
         onClick={handleModalClick}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="session-edit-header">
           <h3>{session ? t('cuppingSession.EditSession') : t('auto.tao_session_moi')}</h3>
@@ -451,9 +454,21 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
             <div className="session-form-group half-width">
               <label>{t('auto.thi_gian_bt_u_92')}<span className="session-required">*</span></label>
               <div className="datetime-wrapper">
-                <div className="datetime-display" onClick={(e) => {
-                  e.currentTarget.nextElementSibling.showPicker();
-                }}>
+                <div 
+                  className="datetime-display" 
+                  onClick={(e) => {
+                    e.currentTarget.nextElementSibling.showPicker();
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.currentTarget.nextElementSibling.showPicker();
+                    }
+                  }}
+                  aria-label="Select start date and time"
+                >
                   {formData.startDate ? formatDateTimeVN(formData.startDate) : 'Chọn thời gian'}
                   <FaCalendarAlt className="datetime-icon-right" />
                 </div>
@@ -469,9 +484,21 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
             <div className="session-form-group half-width">
               <label>{t('auto.thi_gian_kt_thc_93')}<span className="session-required">*</span></label>
               <div className="datetime-wrapper">
-                <div className="datetime-display" onClick={(e) => {
-                  e.currentTarget.nextElementSibling.showPicker();
-                }}>
+                <div 
+                  className="datetime-display" 
+                  onClick={(e) => {
+                    e.currentTarget.nextElementSibling.showPicker();
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.currentTarget.nextElementSibling.showPicker();
+                    }
+                  }}
+                  aria-label="Select end date and time"
+                >
                   {formData.endDate ? formatDateTimeVN(formData.endDate) : 'Chọn thời gian'}
                   <FaCalendarAlt className="datetime-icon-right" />
                 </div>
@@ -490,7 +517,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
             <div className="session-form-group half-width">
               <label>{t('auto.che_do_blind_cupping')}</label>
               <div className="blind-cupping-toggle">
-                <label className="toggle-switch">
+                <label className="toggle-switch" aria-label="Toggle blind cupping mode">
                   <input
                     type="checkbox"
                     checked={formData.isBlindCupping}
@@ -510,10 +537,12 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
               <label>
                 {t('cuppingSession.scoreCardFormat')}
                 <span className="session-required">*</span>
+                {/* eslint-disable-next-line react/prop-types */}
                 {session?.is_started && !session?.is_finished && (
                   <span style={{ color: '#dc3545', fontSize: '12px', marginLeft: '8px' }}>{t('cuppingSession.cannotChangeWhileActive')}</span>
                 )}
               </label>
+              {/* eslint-disable-next-line react/prop-types */}
               <select
                 value={formData.scoreCardFormat}
                 onChange={(e) => setFormData({...formData, scoreCardFormat: e.target.value})}
@@ -550,6 +579,15 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
                 <div 
                   className="batch-selector-input"
                   onClick={() => setShowBatchSelector(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setShowBatchSelector(true);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Select green bean batches"
                   style={{ cursor: 'pointer' }}
                 >
                   {selectedBatches.length === 0 ? (
@@ -597,7 +635,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
                     <button
                       key={count}
                       type="button"
-                      className={`sample-count-btn ${parseInt(formData.sampleCount) === count ? 'active' : ''}`}
+                      className={`sample-count-btn ${Number.parseInt(formData.sampleCount) === count ? 'active' : ''}`}
                       onClick={() => handleSampleCountClick(count)}
                     >
                       {count}
@@ -610,7 +648,7 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
           
           <div className="session-form-actions">
             <button type="submit" disabled={loading} className="session-update-button">
-              {loading ? t("auto.dang_luu") : (session ? t("auto.cp_nht_445") : t("auto.tao_moi"))}
+              {getSubmitButtonText()}
             </button>
             <button type="button" onClick={onClose} className="session-cancel-button">{t('auto.hy_100')}</button>
           </div>
@@ -629,6 +667,26 @@ const SessionForm = ({ session, onClose, onSuccess, selectedContext }) => {
       )}
     </div>
   );
+};
+
+SessionForm.propTypes = {
+  session: PropTypes.shape({
+    session_id: PropTypes.string,
+    uuid: PropTypes.string,
+    purpose: PropTypes.string,
+    description: PropTypes.string,
+    cupping_date: PropTypes.string,
+    finish_date: PropTypes.string,
+    finished_date: PropTypes.string,
+    type_of_session: PropTypes.string,
+    is_blind_cupping: PropTypes.bool,
+    score_card_format: PropTypes.string,
+    is_started: PropTypes.bool,
+    is_finished: PropTypes.bool
+  }),
+  onClose: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
+  selectedContext: PropTypes.string
 };
 
 export default SessionForm;

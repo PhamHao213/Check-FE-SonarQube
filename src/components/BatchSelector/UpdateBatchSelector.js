@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { FaTimes } from 'react-icons/fa';
 import { greenBeanBatchApi } from '../../api/cuppingSessionApi';
@@ -29,7 +30,7 @@ const UpdateBatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [] }
       
       setBatches(formattedBatches);
     } catch (error) {
-      // console.error('Error fetching batches:', error);
+      console.error('Error fetching batches:', error);
       setBatches([]);
     } finally {
       setLoading(false);
@@ -49,6 +50,65 @@ const UpdateBatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [] }
   const handleConfirm = () => {
     onSelect(tempSelected);
     onClose();
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return <div>{t('auto.ang_ti_26')}</div>;
+    }
+    
+    if (batches.length === 0) {
+      return <div>{t('auto.cha_c_batch_no__28')}</div>;
+    }
+    
+    return (
+      <div>
+        {batches.map((batch, index) => {
+          const batchId = batch.uuid || batch.gb_batch_id;
+          const isSelected = tempSelected.some(b => (b.uuid || b.gb_batch_id) === batchId);
+          return (
+            <div
+              key={batchId || index}
+              role="button"
+              tabIndex={0}
+              onClick={() => toggleBatch(batch)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleBatch(batch);
+                }
+              }}
+              style={{
+                padding: '12px',
+                margin: '8px 0',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                backgroundColor: isSelected ? '#e3f2fd' : '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <div>
+                <div style={{fontWeight: 'bold', marginBottom: '4px'}}>
+                  Batch {batch.gb_batch_id} - {batch.greenbean_name || 'Chưa có tên'}
+                </div>
+                <div style={{fontSize: '12px', color: '#666'}}>
+                  Giống: {batch.variety || 'N/A'} | NCC: {batch.vendor_name || 'N/A'}
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => toggleBatch(batch)}
+                style={{marginLeft: '10px'}}
+              />
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   if (!isOpen) return null;
@@ -98,50 +158,7 @@ const UpdateBatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [] }
           overflow: 'auto',
           padding: '20px'
         }}>
-          {loading ? (
-            <div>{t('auto.ang_ti_26')}</div>
-          ) : batches.length === 0 ? (
-            <div>{t('auto.cha_c_batch_no__28')}</div>
-          ) : (
-            <div>
-              {batches.map((batch, index) => {
-                const batchId = batch.uuid || batch.gb_batch_id;
-                const isSelected = tempSelected.some(b => (b.uuid || b.gb_batch_id) === batchId);
-                return (
-                  <div
-                    key={batchId || index}
-                    onClick={() => toggleBatch(batch)}
-                    style={{
-                      padding: '12px',
-                      margin: '8px 0',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px',
-                      backgroundColor: isSelected ? '#e3f2fd' : '#fff',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <div>
-                      <div style={{fontWeight: 'bold', marginBottom: '4px'}}>
-                        Batch {batch.gb_batch_id} - {batch.greenbean_name || 'Chưa có tên'}
-                      </div>
-                      <div style={{fontSize: '12px', color: '#666'}}>
-                        Giống: {batch.variety || 'N/A'} | NCC: {batch.vendor_name || 'N/A'}
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleBatch(batch)}
-                      style={{marginLeft: '10px'}}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          {renderContent()}
         </div>
 
         <div style={{
@@ -172,6 +189,13 @@ const UpdateBatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [] }
       </div>
     </div>
   );
+};
+
+UpdateBatchSelector.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  selectedBatches: PropTypes.array
 };
 
 export default UpdateBatchSelector;

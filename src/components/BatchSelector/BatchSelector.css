@@ -227,22 +227,6 @@
   box-shadow: 0 0 0 3px rgba(31, 66, 155, 0.1);
 }
 
-.batch-filter-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  color: #374151;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
 .date-filters {
   display: flex;
   gap: 8px;

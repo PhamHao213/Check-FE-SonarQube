@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './i18n'; // Import i18n configuration
@@ -51,9 +52,10 @@ const hashVendorId = (vendorId) => {
 };
 
 const unhashVendorId = (hashedId) => {
+  if (!hashedId) return null;
   try {
     return atob(hashedId);
-  } catch {
+  } catch (error) {
     return null;
   }
 };
@@ -89,6 +91,10 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return children;
+};
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 const CuppingProtectedRoute = ({ children }) => {
@@ -171,6 +177,10 @@ const CuppingProtectedRoute = ({ children }) => {
   return children;
 };
 
+CuppingProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired
+};
+
 const SessionDetailPage = ({ selectedContext }) => {
   const { session_id } = useParams();
   const navigate = useNavigate();
@@ -196,6 +206,10 @@ const SessionDetailPage = ({ selectedContext }) => {
   if (!session) return <div>Không tìm thấy session</div>;
 
   return <SessionDetail session={session} onBack={() => navigate('/session')} onRefresh={fetchSession} selectedContext={selectedContext} />;
+};
+
+SessionDetailPage.propTypes = {
+  selectedContext: PropTypes.object
 };
 
 const AffectiveFormPage = ({ standalone = false }) => {
@@ -428,6 +442,11 @@ const AffectiveFormPage = ({ standalone = false }) => {
     </>
   );
 };
+
+AffectiveFormPage.propTypes = {
+  standalone: PropTypes.bool
+};
+
 const DescriptiveFormPage = ({ standalone = false }) => {
   const { session_id } = useParams();
   const navigate = useNavigate();
@@ -640,8 +659,8 @@ const DescriptiveFormPage = ({ standalone = false }) => {
     fetchSessionData();
   }, [session_id]);
 
-  if (loading) return <div>Đang tải...</div>;
-  if (!sessionData) return <div>Không tìm thấy session</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!sessionData) return <div>session not found</div>;
 
   const handleBack = standalone ? null : () => {
     const currentPath = window.location.pathname;
@@ -661,6 +680,10 @@ const DescriptiveFormPage = ({ standalone = false }) => {
       <Toast />
     </>
   );
+};
+
+DescriptiveFormPage.propTypes = {
+  standalone: PropTypes.bool
 };
 
 const CuppingFormPage = ({ standalone = false }) => {
@@ -874,9 +897,12 @@ const CuppingFormPage = ({ standalone = false }) => {
   );
 };
 
+CuppingFormPage.propTypes = {
+  standalone: PropTypes.bool
+};
+
 // Tạo LoginWrapper để xử lý redirect sau login
 const LoginWrapper = () => {
-  const location = useLocation();
 
   const handleLoginSuccess = () => {
     // Start token checking after successful login
@@ -886,28 +912,21 @@ const LoginWrapper = () => {
     let returnUrl = null;
 
     // 1. Từ location state (khi chuyển từ CuppingProtectedRoute)
-    if (location.state?.returnTo) {
-      returnUrl = location.state.returnTo;
-
-    }
-
-    // 2. Từ sessionStorage (backup từ AuthModal)
-    if (!returnUrl) {
-      returnUrl = sessionStorage.getItem('authReturnUrl');
+    const getReturnUrlFromSession = () => {
+      const url = sessionStorage.getItem('authReturnUrl');
       sessionStorage.removeItem('authReturnUrl');
-      if (returnUrl) {
-
-      }
-    }
-
-    // 3. Từ URL query params
-    if (!returnUrl) {
-      const searchParams = new URLSearchParams(window.location.search);
-      returnUrl = searchParams.get('returnUrl');
-      if (returnUrl) {
-
-      }
-    }
+      return url;
+    };
+    
+    const getReturnUrlFromQuery = () => {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('returnUrl');
+    };
+    
+    returnUrl =
+      returnUrl ||
+      getReturnUrlFromSession() ||
+      getReturnUrlFromQuery();
 
     // Redirect về trang cũ
     if (returnUrl) {
@@ -963,16 +982,19 @@ const BatchDetailPage = ({ selectedContext }) => {
     }
   };
 
-  if (loading) return <div>Đang tải...</div>;
-  if (!batch) return <div>Không tìm thấy batch</div>;
+  if (loading) return <div>Loading...</div>;
+  if (!batch) return <div>No batch found</div>;
 
   return <BatchDetail batch={batch} onClose={handleClose} selectedContext={selectedContext} />;
+};
+
+BatchDetailPage.propTypes = {
+  selectedContext: PropTypes.object
 };
 
 const VendorDetailPage = ({ selectedContext }) => {
   const { vendor_id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleBack = () => {
     const prefix = selectedContext?.type === 'organization'
@@ -996,6 +1018,13 @@ const VendorDetailPage = ({ selectedContext }) => {
   />;
 };
 
+VendorDetailPage.propTypes = {
+  selectedContext: PropTypes.shape({
+    type: PropTypes.string,
+    uuid: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })
+};
+
 const HeaderOnlyLayout = ({ children, selectedContext }) => {
   return (
     <div className="App">
@@ -1005,6 +1034,14 @@ const HeaderOnlyLayout = ({ children, selectedContext }) => {
       <Toast />
     </div>
   );
+};
+
+HeaderOnlyLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+  selectedContext: PropTypes.shape({
+    type: PropTypes.string,
+    uuid: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })
 };
 
 const MainLayout = ({ children, selectedContext, onContextSelect }) => {
@@ -1113,9 +1150,17 @@ const MainLayout = ({ children, selectedContext, onContextSelect }) => {
   );
 };
 
+MainLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+  selectedContext: PropTypes.shape({
+    type: PropTypes.string,
+    uuid: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  }),
+  onContextSelect: PropTypes.func
+};
+
 function App() {
   const [selectedContext, setSelectedContext] = useState(null);
-  const [contextLoading, setContextLoading] = useState(true);
 
   useEffect(() => {
     const shouldSkipContext = (path) => {
