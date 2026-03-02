@@ -35,11 +35,10 @@ export const affectiveScoreCardApi = {
     }
 
     const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
+    if (!contentType?.includes('application/json')) {
       const errorText = await response.text();
       throw new Error(`Server returned non-JSON response: ${errorText}`);
     }
-
     const result = await response.json();
     return result;
   },

@@ -4,12 +4,12 @@ export const greenBeanBatchApi = {
   getAll: async () => {
     try {
       const policyId = await getPolicyId();
-      
+
       if (!policyId) {
         console.warn('No policy_id found, returning empty batches');
         return { data: [] };
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/greenbeanbatch?policy_id=${policyId}`, {
         credentials: 'include'
       });
@@ -19,7 +19,7 @@ export const greenBeanBatchApi = {
       const data = await response.json();
       return data;
     } catch (error) {
-      // console.error('Error fetching green bean batches:', error);
+      console.error('Error fetching green bean batches:', error);
       throw error;
     }
   }
@@ -29,12 +29,12 @@ export const greenbeanInfoApi = {
   getAll: async () => {
     try {
       const policyId = await getPolicyId();
-      
+
       if (!policyId) {
         console.warn('No policy_id found, returning empty greenbean info');
         return { data: [] };
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/greenbean-info?policy_id=${policyId}`, {
         credentials: 'include'
       });
@@ -43,11 +43,11 @@ export const greenbeanInfoApi = {
       }
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching greenbean info:', error);
+      console.error('Error fetching greenbean info:', error);
       throw error;
     }
   },
-  
+
   getByBatchId: async (batchId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/greenbean-info/batch/${batchId}`, {
@@ -58,7 +58,7 @@ export const greenbeanInfoApi = {
       }
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching greenbean info by batch id:', error);
+      console.error('Error fetching greenbean info by batch id:', error);
       throw error;
     }
   }
@@ -69,7 +69,7 @@ const getAuthHeaders = (requireAuth = true) => {
   const headers = {
     'Content-Type': 'application/json'
   };
-  
+
   return headers;
 };
 
@@ -78,7 +78,7 @@ const getPolicyId = async (selectedContext = null) => {
   try {
     const context = selectedContext || { type: 'personal' };
     const contextType = context?.type || 'personal';
-    
+
     if (contextType === 'personal') {
       const policyResponse = await fetch(`${API_BASE_URL}/policies/personal`, {
         credentials: 'include'
@@ -96,10 +96,10 @@ const getPolicyId = async (selectedContext = null) => {
         return policyData.data?.uuid;
       }
     }
-    
+
     return null;
   } catch (error) {
-    // console.error('Error getting policy_id:', error);
+    console.error('Error getting policy_id:', error);
     return null;
   }
 };
@@ -109,16 +109,16 @@ export const cuppingSessionApi = {
   create: async (sessionData, selectedContext = null) => {
     try {
       const policyId = await getPolicyId(selectedContext);
-      
+
       if (!policyId) {
         throw new Error('Không thể xác định workspace');
       }
-      
+
       const requestData = {
         ...sessionData,
         policy_id: policyId
       };
-      
+
       const response = await fetch(`${API_BASE_URL}/cupping-sessions`, {
         method: 'POST',
         credentials: 'include',
@@ -127,14 +127,14 @@ export const cuppingSessionApi = {
         },
         body: JSON.stringify(requestData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error creating cupping session:', error);
+      console.error('Error creating cupping session:', error);
       throw error;
     }
   },
@@ -143,36 +143,36 @@ export const cuppingSessionApi = {
   getAll: async (selectedContext = null, filters = {}) => {
     try {
       const policyId = await getPolicyId(selectedContext);
-      
+
       if (!policyId) {
         console.warn('No policy_id found, returning empty sessions');
         return { data: [] };
       }
-      
+
       let url = `${API_BASE_URL}/cupping-sessions?policy_id=${policyId}`;
-      
+
       // Add variety filter if provided
       if (filters.variety) {
         url += `&variety=${encodeURIComponent(filters.variety)}`;
       }
-      
+
       // Add country filter if provided
       if (filters.country) {
         url += `&country=${encodeURIComponent(filters.country)}`;
       }
-      
-      
+
+
       const response = await fetch(url, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching cupping sessions:', error);
+      console.error('Error fetching cupping sessions:', error);
       throw error;
     }
   },
@@ -183,14 +183,14 @@ export const cuppingSessionApi = {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/${uuid}`, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching cupping session:', error);
+      console.error('Error fetching cupping session:', error);
       throw error;
     }
   },
@@ -199,14 +199,14 @@ export const cuppingSessionApi = {
   getSessionInfo: async (uuid) => {
     try {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/${uuid}/info`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching session info:', error);
+      console.error('Error fetching session info:', error);
       throw error;
     }
   },
@@ -217,14 +217,14 @@ export const cuppingSessionApi = {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/${sessionId}/permissions`, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching session permissions:', error);
+      console.error('Error fetching session permissions:', error);
       throw error;
     }
   },
@@ -240,14 +240,14 @@ export const cuppingSessionApi = {
         },
         body: JSON.stringify(statusData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error updating session status:', error);
+      console.error('Error updating session status:', error);
       throw error;
     }
   },
@@ -259,14 +259,14 @@ export const cuppingSessionApi = {
         method: 'PUT',
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error starting session:', error);
+      console.error('Error starting session:', error);
       throw error;
     }
   },
@@ -282,14 +282,14 @@ export const cuppingSessionApi = {
         },
         body: JSON.stringify({ is_finished: isFinished }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error finishing session:', error);
+      console.error('Error finishing session:', error);
       throw error;
     }
   },
@@ -300,14 +300,14 @@ export const cuppingSessionApi = {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/${uuid}/batches`, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching session batches:', error);
+      console.error('Error fetching session batches:', error);
       throw error;
     }
   },
@@ -318,14 +318,14 @@ export const cuppingSessionApi = {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/${uuid}/batches/guest`, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching session batches for guest:', error);
+      console.error('Error fetching session batches for guest:', error);
       throw error;
     }
   },
@@ -341,14 +341,14 @@ export const cuppingSessionApi = {
         },
         body: JSON.stringify({ batches }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error updating session batches:', error);
+      console.error('Error updating session batches:', error);
       throw error;
     }
   },
@@ -364,14 +364,14 @@ export const cuppingSessionApi = {
         },
         body: JSON.stringify(sessionData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error updating cupping session:', error);
+      console.error('Error updating cupping session:', error);
       throw error;
     }
   },
@@ -383,14 +383,14 @@ export const cuppingSessionApi = {
         method: 'DELETE',
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error deleting cupping session:', error);
+      console.error('Error deleting cupping session:', error);
       throw error;
     }
   },
@@ -399,24 +399,24 @@ export const cuppingSessionApi = {
   searchByGreenbeanName: async (searchTerm, selectedContext = null) => {
     try {
       const policyId = await getPolicyId(selectedContext);
-      
+
       // Đảm bảo luôn có policy_id để lọc kết quả
       if (!policyId) {
         console.warn('No policy_id found for search, returning empty results');
         return { data: [] };
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/search?greenbean_name=${encodeURIComponent(searchTerm)}&policy_id=${policyId}`, {
         credentials: 'include'
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error searching sessions by greenbean name:', error);
+      console.error('Error searching sessions by greenbean name:', error);
       throw error;
     }
   },
@@ -425,14 +425,14 @@ export const cuppingSessionApi = {
   getSharedSessionData: async (sessionBatchId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/cupping-sessions/shared/${sessionBatchId}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
-      // console.error('Error fetching shared session data:', error);
+      console.error('Error fetching shared session data:', error);
       throw error;
     }
   }
