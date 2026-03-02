@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'; // Thêm import PropTypes
 import { useTranslation } from 'react-i18next';
 import './CreateCuppingSession.css';
 import { FaCalendarAlt, FaChevronDown, FaClipboardList, FaInfoCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -16,12 +17,12 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
     purpose: '',
     typeOfSession: '',
     sampleCount: 5,
-    isBlindCupping: false, // Thêm trường blind cupping
-    scoreCardFormat: 'SCA' // Sử dụng scoreCardFormat thay vì formType
+    isBlindCupping: false,
+    scoreCardFormat: 'SCA'
   });
   const [selectedBatches, setSelectedBatches] = useState([]);
   const [showBatchSelector, setShowBatchSelector] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  // const [isCopied, setIsCopied] = useState(false); // Xóa biến không sử dụng
   const [activeTooltip, setActiveTooltip] = useState(null);
   const [cuppingDuration, setCuppingDuration] = useState('');
 
@@ -72,7 +73,6 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Xử lý checkbox
     if (type === 'checkbox') {
       setFormData(prev => ({
         ...prev,
@@ -81,10 +81,9 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
       return;
     }
 
-    // Nếu thay đổi thời gian bắt đầu, tự động điền thời gian kết thúc + 2 tiếng
     if (name === 'cuppingDate' && value) {
       const startDate = new Date(value);
-      const endDateObj = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // +2 hours (handles day rollovers)
+      const endDateObj = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
       const endDateString = toDatetimeLocalString(endDateObj);
 
       setFormData(prev => ({
@@ -113,8 +112,8 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
       );
       return;
     }
-    // Chỉ validate sampleCount khi chọn form SCA hoặc Affective
-    if ((formData.scoreCardFormat === 'SCA' || formData.scoreCardFormat === 'AffectiveScoreCard') && parseInt(formData.sampleCount, 10) > 5) {
+    // Sử dụng Number.parseInt thay vì parseInt
+    if ((formData.scoreCardFormat === 'SCA' || formData.scoreCardFormat === 'AffectiveScoreCard') && Number.parseInt(formData.sampleCount, 10) > 5) {
       showToast(
         t('cuppingSession.max_limit'),
         'warning'
@@ -140,8 +139,8 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
         score_card_format: formData.scoreCardFormat,
         batches: selectedBatches.map(batch => ({
           batch_id: batch.uuid || batch.gb_batch_id,
-          // Gửi number_of_sample_cup khi chọn form SCA hoặc Affective
-          number_of_sample_cup: (formData.scoreCardFormat === 'SCA' || formData.scoreCardFormat === 'AffectiveScoreCard') ? parseInt(formData.sampleCount, 10) : 1
+          // Sử dụng Number.parseInt thay vì parseInt
+          number_of_sample_cup: (formData.scoreCardFormat === 'SCA' || formData.scoreCardFormat === 'AffectiveScoreCard') ? Number.parseInt(formData.sampleCount, 10) : 1
         }))
       };
       onSubmit(submitData);
@@ -159,18 +158,44 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
     }
   };
 
-  const getCuppingLink = () => {
-    return `${window.location.origin}/#cupping_scorecard/session/${createdSessionId}`;
-  };
+  // Xóa hàm copyToClipboard không sử dụng
+  // const getCuppingLink = () => {
+  //   return `${window.location.origin}/#cupping_scorecard/session/${createdSessionId}`;
+  // };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(getCuppingLink());
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
+  // const copyToClipboard = () => {
+  //   navigator.clipboard.writeText(getCuppingLink());
+  //   setIsCopied(true);
+  //   setTimeout(() => setIsCopied(false), 2000);
+  // };
 
-  const goToCupping = () => {
-    // Function for future use
+  // Xóa hàm goToCupping không sử dụng
+  // const goToCupping = () => {
+  //   // Function for future use
+  // };
+
+  // Helper function để lấy style dựa trên scoreCardFormat
+  const getScoreCardStyles = (format) => {
+    switch(format) {
+      case 'SCA':
+        return {
+          background: '#e3f2fd',
+          borderColor: '#1976d2',
+          color: '#0d47a1'
+        };
+      case 'AffectiveScoreCard':
+        return {
+          background: '#f3e5f5',
+          borderColor: '#7b1fa2',
+          color: '#4a148c'
+        };
+      default:
+        return {
+          background: '#fff3e0',
+          borderColor: '#f57c00',
+          color: '#e65100'
+        };
+    }
   };
 
   return (
@@ -194,9 +219,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
           <div className="create-session-form-row">
             <div className="create-session-form-group half-width">
               <label className="create-session-label">{t('auto.thi_gian_bt_u_54')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('startTime')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('startTime')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.startTime}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'startTime' && (
                     <span className="tooltip-text">{tooltipContent.startTime}</span>
@@ -204,21 +236,26 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                 </span>
               </label>
               <div className="datetime-wrapper">
-                <div className="datetime-display" onClick={(e) => {
-                  const input = e.currentTarget.nextElementSibling;
-                  if (typeof input.showPicker === 'function') {
-                    try {
-                      input.showPicker();
-                    } catch (err) {
+                <button 
+                  type="button"
+                  className="datetime-display" 
+                  onClick={(e) => {
+                    const input = e.currentTarget.nextElementSibling;
+                    if (typeof input.showPicker === 'function') {
+                      try {
+                        input.showPicker();
+                      } catch (err) {
+                        input.focus();
+                      }
+                    } else {
                       input.focus();
                     }
-                  } else {
-                    input.focus();
-                  }
-                }}>
+                  }}
+                  aria-label="Chọn thời gian bắt đầu"
+                >
                   {formData.cuppingDate ? formatDateTimeVN(formData.cuppingDate) : t('auto.chon_tg')}
                   <FaCalendarAlt className="datetime-icon-right" />
-                </div>
+                </button>
                 <input
                   type="datetime-local"
                   name="cuppingDate"
@@ -231,9 +268,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
             </div>
             <div className="create-session-form-group half-width">
               <label className="create-session-label">{t('auto.thi_gian_kt_thc_55')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('endTime')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('endTime')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.endTime}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'endTime' && (
                     <span className="tooltip-text">{tooltipContent.endTime}</span>
@@ -241,21 +285,26 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                 </span>
               </label>
               <div className="datetime-wrapper">
-                <div className="datetime-display" onClick={(e) => {
-                  const input = e.currentTarget.nextElementSibling;
-                  if (typeof input.showPicker === 'function') {
-                    try {
-                      input.showPicker();
-                    } catch (err) {
+                <button 
+                  type="button"
+                  className="datetime-display" 
+                  onClick={(e) => {
+                    const input = e.currentTarget.nextElementSibling;
+                    if (typeof input.showPicker === 'function') {
+                      try {
+                        input.showPicker();
+                      } catch (err) {
+                        input.focus();
+                      }
+                    } else {
                       input.focus();
                     }
-                  } else {
-                    input.focus();
-                  }
-                }}>
+                  }}
+                  aria-label="Chọn thời gian kết thúc"
+                >
                   {formData.finishedDate ? formatDateTimeVN(formData.finishedDate) : t('auto.chon_tg')}
                   <FaCalendarAlt className="datetime-icon-right" />
-                </div>
+                </button>
                 <input
                   type="datetime-local"
                   name="finishedDate"
@@ -271,9 +320,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
           <div className="create-session-form-row">
             <div className="create-session-form-group half-width">
               <label className="create-session-label">{t('auto.mc_ch_phin_th_n_56')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('purpose')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('purpose')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.purpose}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'purpose' && (
                     <span className="tooltip-text">{tooltipContent.purpose}</span>
@@ -296,9 +352,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
             </div>
             <div className="create-session-form-group half-width">
               <label className="create-session-label">{t('auto.loi_phin_62')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('sessionType')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('sessionType')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.sessionType}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'sessionType' && (
                     <span className="tooltip-text">{tooltipContent.sessionType}</span>
@@ -323,9 +386,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
             {/* Trường chọn Score Card Format */}
             <div className="create-session-form-group half-width">
               <label className="create-session-label">Loại Form Đánh Giá<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('scoreCardFormat')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('scoreCardFormat')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.scoreCardFormat}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'scoreCardFormat' && (
                     <span className="tooltip-text">{tooltipContent.scoreCardFormat}</span>
@@ -337,12 +407,7 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                 value={formData.scoreCardFormat}
                 onChange={handleChange}
                 className="create-session-select"
-                style={{
-                  backgroundColor: formData.scoreCardFormat === 'SCA' ? '#e3f2fd' : formData.scoreCardFormat === 'AffectiveScoreCard' ? '#f3e5f5' : '#fff3e0',
-                  borderColor: formData.scoreCardFormat === 'SCA' ? '#1976d2' : formData.scoreCardFormat === 'AffectiveScoreCard' ? '#7b1fa2' : '#f57c00',
-                  color: formData.scoreCardFormat === 'SCA' ? '#0d47a1' : formData.scoreCardFormat === 'AffectiveScoreCard' ? '#4a148c' : '#e65100',
-                  fontWeight: '600'
-                }}
+                style={getScoreCardStyles(formData.scoreCardFormat)}
                 required
               >
                 <option value="SCA">SCA Cupping Form</option>
@@ -355,9 +420,16 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
             {(formData.scoreCardFormat === 'SCA' || formData.scoreCardFormat === 'AffectiveScoreCard') && (
               <div className="create-session-form-group half-width">
                 <label className="create-session-label">{t('auto.s_lng_chn_th_nm_66')}<span className="required">*</span>
-                  <span className="info-icon-wrapper"
+                  <span 
+                    className="info-icon-wrapper"
                     onMouseEnter={() => setActiveTooltip('sampleCount')}
-                    onMouseLeave={() => setActiveTooltip(null)}>
+                    onMouseLeave={() => setActiveTooltip(null)}
+                    onFocus={() => setActiveTooltip('sampleCount')}
+                    onBlur={() => setActiveTooltip(null)}
+                    tabIndex="0"
+                    role="button"
+                    aria-label={tooltipContent.sampleCount}
+                  >
                     <FaInfoCircle className="info-icon" />
                     {activeTooltip === 'sampleCount' && (
                       <span className="tooltip-text">{tooltipContent.sampleCount}</span>
@@ -383,11 +455,18 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
           <div className="create-session-form-row">
             {/* Thêm trường Blind Cupping */}
             <div className="create-session-form-group half-width">
-              <label className="create-session-label">
+              <label className="create-session-label" htmlFor="isBlindCupping">
                 {t('auto.che_do_blind_cupping')}
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('blindCupping')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('blindCupping')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.blindCupping}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'blindCupping' && (
                     <span className="tooltip-text">{tooltipContent.blindCupping}</span>
@@ -395,9 +474,10 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                 </span>
               </label>
               <div className="blind-cupping-toggle">
-                <label className="toggle-switch">
+                <label className="toggle-switch" htmlFor="isBlindCupping">
                   <input
                     type="checkbox"
+                    id="isBlindCupping"
                     name="isBlindCupping"
                     checked={formData.isBlindCupping}
                     onChange={handleChange}
@@ -405,7 +485,7 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                   />
                   <span className="toggle-slider">
                     <span className="toggle-icon">
-                      {/* {formData.isBlindCupping ? <FaEyeSlash /> : <FaEye />} */}
+                      {/* Icon có thể thêm sau nếu cần */}
                     </span>
                   </span>
                 </label>
@@ -419,19 +499,28 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
           <div className="create-session-form-row">
             <div className="create-session-form-group full-width">
               <label className="create-session-label">{t('auto.chn_l_nhn_xanh_67')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('batch')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('batch')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.batch}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'batch' && (
                     <span className="tooltip-text">{tooltipContent.batch}</span>
                   )}
                 </span>
               </label>
-              <div
+              <button
+                type="button"
                 className="create-session-batch-selector"
                 onClick={() => setShowBatchSelector(true)}
                 style={{ position: 'relative' }}
+                aria-label="Chọn lô"
               >
                 {selectedBatches.length === 0 ? (
                   <span className="create-session-batch-placeholder">{t('auto.chn_l_cn_th_nm_68')}</span>
@@ -464,16 +553,23 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
                   </div>
                 )}
                 <FaChevronDown style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#6c757d', fontSize: '12px', pointerEvents: 'none' }} />
-              </div>
+              </button>
             </div>
           </div>
 
           <div className="create-session-form-row">
             <div className="create-session-form-group full-width">
               <label className="create-session-label">{t('auto.m_t_70')}<span className="required">*</span>
-                <span className="info-icon-wrapper"
+                <span 
+                  className="info-icon-wrapper"
                   onMouseEnter={() => setActiveTooltip('description')}
-                  onMouseLeave={() => setActiveTooltip(null)}>
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  onFocus={() => setActiveTooltip('description')}
+                  onBlur={() => setActiveTooltip(null)}
+                  tabIndex="0"
+                  role="button"
+                  aria-label={tooltipContent.description}
+                >
                   <FaInfoCircle className="info-icon" />
                   {activeTooltip === 'description' && (
                     <span className="tooltip-text">{tooltipContent.description}</span>
@@ -512,6 +608,26 @@ const CreateCuppingSession = ({ onBack, onSubmit, onGoToCupping, loading, create
 
     </div>
   );
+};
+
+// Thêm PropTypes validation
+CreateCuppingSession.propTypes = {
+  onBack: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onGoToCupping: PropTypes.func,
+  loading: PropTypes.bool,
+  createdSessionId: PropTypes.string,
+  onStartSession: PropTypes.func,
+  selectedContext: PropTypes.object
+};
+
+// Thêm defaultProps cho các props không bắt buộc
+CreateCuppingSession.defaultProps = {
+  onGoToCupping: () => {},
+  loading: false,
+  createdSessionId: null,
+  onStartSession: () => {},
+  selectedContext: {}
 };
 
 export default CreateCuppingSession;

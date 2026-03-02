@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import './AuthModal.css';
 
@@ -56,6 +57,13 @@ const AuthModal = ({ isOpen, onLogin, onGuest, onClose }) => {
       </div>
     </div>
   );
+};
+
+AuthModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onLogin: PropTypes.func.isRequired,
+  onGuest: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
 };
 
 export default AuthModal;

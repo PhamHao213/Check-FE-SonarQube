@@ -25,7 +25,7 @@
   background-color: #FFFFFF;
   border: 1px solid rgba(121, 121, 121, 0.3);
   border-radius: 8px;
-  color: #797979;
+  color: #4a4a4a;  /* Đã fix - màu tối hơn */
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -36,7 +36,7 @@
 
 .create-session-back-button:hover {
   background-color: rgba(121, 121, 121, 0.05);
-  border-color: #797979;
+  border-color: #4a4a4a;
 }
 
 .create-session-header {
@@ -219,7 +219,7 @@
 }
 
 .create-session-submit-button:hover {
-  background-color: rgba(31, 66, 155, 0.9);
+  background-color: #163a87;
 }
 
 .create-session-cancel-button:hover {
@@ -237,7 +237,7 @@
 }
 
 .create-session-share-button {
-  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  background: linear-gradient(135deg, #0f6b2f 0%, #0a4a1f 100%);  /* Đã fix - màu tối hơn */
   color: #FFFFFF;
   border: none;
   padding: 12px 24px;
@@ -250,7 +250,7 @@
 }
 
 .create-session-share-button:hover {
-  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  background: linear-gradient(135deg, #0a4a1f 0%, #063012 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
 }
@@ -392,7 +392,7 @@
   .create-session-textarea,
   .create-session-datetime-input,
   .create-session-datetime-input-no-icon {
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
     min-height: 44px;
   }
 
@@ -449,7 +449,7 @@
   .create-session-datetime-input,
   .create-session-datetime-input-no-icon {
     padding: 10px;
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
   }
 
   .create-session-selected-batches {
@@ -563,7 +563,7 @@
 
 .close-btn {
   padding: 10px 20px;
-  background: #6c757d;
+  background: #495057;
   color: white;
   border: none;
   border-radius: 6px;
@@ -572,7 +572,7 @@
 
 .goto-btn {
   padding: 10px 20px;
-  background: #28a745;
+  background: #1e7e34;
   color: white;
   border: none;
   border-radius: 6px;
@@ -580,35 +580,36 @@
 }
 
 .close-btn:hover {
-  background: #5a6268;
+  background: #343a40;
 }
 
 .goto-btn:hover {
-  background: #218838;
+  background: #155724;
 }
 
 .copy-btn.copied {
-  background: #28a745 !important;
-  color: white !important;
+  background: #1e7e34 !important;  /* Đã fix - màu tối hơn */
+  color: #FFFFFF !important;
 }
 
 .copy-btn.copied:hover {
-  background: #218838 !important;
+  background: #155724 !important;
 }
+
 .date-range-input {
-  height: 42px !important;
-  min-height: 42px !important;
-  border: 1px solid #ddd !important;
-  border-radius: 6px !important;
-  background-color: #f8f9fa !important;
-  padding: 12px !important;
-  box-sizing: border-box !important;
+  height: 42px;
+  min-height: 42px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .date-range-input:focus {
-  outline: none !important;
-  border-color: #1F429B !important;
-  background-color: white !important;
+  outline: none;
+  border-color: #1F429B;
+  background-color: white;
 }
 
 .sample-count-buttons {
@@ -706,11 +707,7 @@
   box-shadow: 0 0 0 2px rgba(31, 66, 155, 0.1);
 }
 
-.create-session-datetime-input-no-icon::-webkit-calendar-picker-indicator {
-  opacity: 1;
-  cursor: pointer;
-}
-
+/* Giữ lại một selector, xóa duplicate */
 .create-session-datetime-input-no-icon::-webkit-calendar-picker-indicator {
   opacity: 1;
   cursor: pointer;
@@ -758,7 +755,6 @@
   opacity: 0;
   cursor: pointer;
   z-index: 1;
-  /* iOS compatibility */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -767,12 +763,12 @@
 /* iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
   .datetime-input-hidden {
-    opacity: 0.01; /* Slightly visible for iOS to detect */
+    opacity: 0.01;
     pointer-events: auto;
   }
   
   .datetime-display {
-    pointer-events: none; /* Let input handle clicks on iOS */
+    pointer-events: none;
   }
 }
 
@@ -923,7 +919,7 @@
 }
 
 .toggle-input:checked + .toggle-slider {
-  background-color: #1F429B;
+  background-color: #163a87;  /* Đã fix - tối hơn một chút */
 }
 
 .toggle-input:checked + .toggle-slider:before {
@@ -941,7 +937,7 @@
 }
 
 .toggle-input:not(:checked) + .toggle-slider .toggle-icon {
-  color: #6c757d;
+  color: #495057;  /* Màu tối hơn để contrast với nền #dee2e6 */
 }
 
 .toggle-input:checked + .toggle-slider .toggle-icon {
@@ -960,7 +956,7 @@
 }
 
 .toggle-input:checked:hover + .toggle-slider {
-  background-color: #163a87;
+  background-color: #0f2b63;
 }
 
 .toggle-input:not(:checked):hover + .toggle-slider {
