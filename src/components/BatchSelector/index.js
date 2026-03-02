@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import './BatchSelector.css';
 import { FaTimes, FaSearch, FaFilter } from 'react-icons/fa';
@@ -54,46 +55,13 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
   const fetchBatches = async () => {
     setLoading(true);
     try {
-      // Lấy policy_id của user hiện tại
-      let currentPolicyId = null;
-      try {
-        const contextType = selectedContext?.type || 'personal';
-
-        if (contextType === 'personal') {
-          const policyResponse = await fetch(`${API_BASE_URL}/policies/personal`, {
-            credentials: 'include',
-            headers: {}
-          });
-          if (policyResponse.ok) {
-            const policyData = await policyResponse.json();
-            currentPolicyId = policyData.data?.uuid;
-          }
-        } else if (contextType === 'organization') {
-          const policyResponse = await fetch(`${API_BASE_URL}/policies/organization/${selectedContext.uuid}`, {
-            credentials: 'include',
-            headers: {}
-          });
-          if (policyResponse.ok) {
-            const policyData = await policyResponse.json();
-            currentPolicyId = policyData.data?.uuid;
-          }
-        }
-      } catch (error) {
-        // console.error('Error getting policy_id:', error);
-      }
-
       const batchResponse = await batchApi.getAllBatches(selectedContext);
       const batchesData = batchResponse.data || [];
 
-
-
-      // Tạm thời bỏ qua client-side filtering để kiểm tra
       const formattedBatches = batchesData.map(batch => ({
         ...batch,
         uuid: batch.gb_batch_id || batch.uuid
       }));
-
-
 
       setBatches(formattedBatches);
     } catch (error) {
@@ -123,14 +91,6 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
     }
   };
 
-  const updateSampleCount = (batchId, count) => {
-    setTempSelected(tempSelected.map(batch =>
-      (batch.uuid || batch.gb_batch_id) === batchId
-        ? { ...batch, number_of_sample_cup: count }
-        : batch
-    ));
-  };
-
   const toggleAll = () => {
     if (tempSelected.length === batches.length) {
       // When deselecting all, keep originally selected batches if disableDeselect is true
@@ -151,6 +111,91 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
   const handleConfirm = () => {
     onSelect(tempSelected);
     onClose();
+  };
+
+  const renderBatchContent = () => {
+    if (loading) {
+      return <div className="batch-selector-loading">{t('auto.ang_ti_34')}</div>;
+    }
+    
+    if (batches.length === 0) {
+      return (
+        <div className="batch-selector-empty">
+          <p>{t('auto.cha_c_batch_no__36')}</p>
+        </div>
+      );
+    }
+    
+    if (filteredBatches.length === 0) {
+      return (
+        <div className="batch-selector-empty">
+          <p>{t('auto.khng_tm_thy_bat_38')}</p>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="batch-selector-table-container">
+        <table className="batch-selector-table">
+          <thead>
+            <tr>
+              <th>{t('auto.tn_nhn_xanh_40')}</th>
+              <th>{t('greenBeans.varietyLabel')}</th>
+              <th>{t('greenBeans.varietyTypeLabel')}</th>
+              <th>{t('auto.t_trng_43')}</th>
+              <th>{t('auto.ngy_to_44')}</th>
+              <th>
+                <input
+                  type="checkbox"
+                  checked={tempSelected.length === filteredBatches.length && filteredBatches.length > 0}
+                  onChange={toggleAll}
+                  className="batch-checkbox"
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBatches.map((batch, index) => {
+              const batchId = batch.uuid || batch.gb_batch_id;
+              const isSelected = tempSelected.some(b => {
+                const selectedId = b.uuid || b.gb_batch_id;
+                return selectedId === batchId || selectedId === batch.gb_batch_id || selectedId === batch.uuid;
+              });
+              return (
+                <tr
+                  key={`${batchId}-${index}`}
+                  className={`batch-row ${isSelected ? 'selected' : ''}`}
+                  onClick={() => toggleBatch(batch)}
+                >
+                  <td className="batch-name">
+                    {batch.green_bean_name || batch.greenbean_name || '-'}
+                  </td>
+                  <td>{batch.variety_type || '-'}</td>
+                  <td>{batch.variety || '-'}</td>
+                  <td>{batch.density || '-'} g/ml</td>
+                  <td>
+                    {batch.created_dt ?
+                      new Date(batch.created_dt).toLocaleDateString('vi-VN') :
+                      '-'
+                    }
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleBatch(batch)}
+                      className="batch-checkbox"
+                      disabled={disableDeselect && selectedBatches.some(b => (b.uuid || b.gb_batch_id) === batchId)}
+                      style={disableDeselect && selectedBatches.some(b => (b.uuid || b.gb_batch_id) === batchId) ? { opacity: 0.5 } : {}}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   const filteredBatches = batches.filter(batch => {
@@ -174,8 +219,6 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
 
     return matchesSearch && matchesDate;
   });
-
-  const uniqueVendors = [...new Set(batches.map(b => b.vendor_name).filter(Boolean))];
 
   if (!isOpen) return null;
 
@@ -236,81 +279,7 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
         )}
 
         <div className="batch-selector-content">
-          {loading ? (
-            <div className="batch-selector-loading">{t('auto.ang_ti_34')}</div>
-          ) : batches.length === 0 ? (
-            <div className="batch-selector-empty">
-              <p>{t('auto.cha_c_batch_no__36')}</p>
-            </div>
-          ) : filteredBatches.length === 0 ? (
-            <div className="batch-selector-empty">
-              <p>{t('auto.khng_tm_thy_bat_38')}</p>
-            </div>
-          ) : (
-            <div className="batch-selector-table-container">
-              <table className="batch-selector-table">
-                <thead>
-                  <tr>
-                    <th>{t('auto.tn_nhn_xanh_40')}</th>
-                    <th>{t('greenBeans.varietyLabel')}</th>
-                    <th>{t('greenBeans.varietyTypeLabel')}</th>
-                    <th>{t('auto.t_trng_43')}</th>
-                    <th>{t('auto.ngy_to_44')}</th>
-                    <th>
-                      <input
-                        type="checkbox"
-                        checked={tempSelected.length === filteredBatches.length && filteredBatches.length > 0}
-                        onChange={toggleAll}
-                        className="batch-checkbox"
-                      />
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredBatches.map((batch, index) => {
-                    const batchId = batch.uuid || batch.gb_batch_id;
-                    const isSelected = tempSelected.some(b => {
-                      const selectedId = b.uuid || b.gb_batch_id;
-                      const match = selectedId === batchId || selectedId === batch.gb_batch_id || selectedId === batch.uuid;
-                      if (index === 0) {
-                      }
-                      return match;
-                    });
-                    return (
-                      <tr
-                        key={`${batchId}-${index}`}
-                        className={`batch-row ${isSelected ? 'selected' : ''}`}
-                        onClick={() => toggleBatch(batch)}
-                      >
-                        <td className="batch-name">
-                          {batch.green_bean_name || batch.greenbean_name || '-'}
-                        </td>
-                        <td>{batch.variety_type || '-'}</td>
-                        <td>{batch.variety || '-'}</td>
-                        <td>{batch.density || '-'} g/ml</td>
-                        <td>
-                          {batch.created_dt ?
-                            new Date(batch.created_dt).toLocaleDateString('vi-VN') :
-                            '-'
-                          }
-                        </td>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleBatch(batch)}
-                            className="batch-checkbox"
-                            disabled={disableDeselect && selectedBatches.some(b => (b.uuid || b.gb_batch_id) === batchId)}
-                            style={disableDeselect && selectedBatches.some(b => (b.uuid || b.gb_batch_id) === batchId) ? { opacity: 0.5 } : {}}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+          {renderBatchContent()}
         </div>
 
         <div className="batch-selector-footer">
@@ -323,6 +292,18 @@ const BatchSelector = ({ isOpen, onClose, onSelect, selectedBatches = [], disabl
       </div>
     </div>
   );
+};
+
+BatchSelector.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  selectedBatches: PropTypes.array,
+  disableDeselect: PropTypes.bool,
+  selectedContext: PropTypes.shape({
+    type: PropTypes.string,
+    uuid: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })
 };
 
 export default BatchSelector;

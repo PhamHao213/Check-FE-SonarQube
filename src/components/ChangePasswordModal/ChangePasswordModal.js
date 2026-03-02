@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import './ChangePasswordModal.css';
 import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
@@ -110,24 +111,25 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       if (response.ok) {
         handleClose();
         setShowSuccessModal(true);
+        return;
+      }
+      
+      // Xử lý lỗi từ server
+      if (data.error && data.error.includes('mật khẩu hiện tại')) {
+        setErrors({
+          currentPassword: data.error
+        });
+      } else if (data.error && data.error.includes('Mật khẩu mới phải có')) {
+        setErrors({
+          newPassword: data.error
+        });
       } else {
-        // Xử lý lỗi từ server
-        if (data.error && data.error.includes('mật khẩu hiện tại')) {
-          setErrors({
-            currentPassword: data.error
-          });
-        } else if (data.error && data.error.includes('Mật khẩu mới phải có')) {
-          setErrors({
-            newPassword: data.error
-          });
-        } else {
-          setErrors({
-            currentPassword: data.error || t('toast.error')
-          });
-        }
+        setErrors({
+          currentPassword: data.error || t('toast.error')
+        });
       }
     } catch (error) {
-      // console.error('Change password error:', error);
+      console.error('Change password error:', error);
       setErrors({
         currentPassword: t('toast.error')
       });
@@ -159,8 +161,20 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className="modal-overlay" onClick={handleClose}>
-        <div className="change-password-modal" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="modal-overlay" 
+        onClick={handleClose}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Escape' && handleClose()}
+        aria-label="Close modal"
+      >
+        <div 
+          className="change-password-modal" 
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
           <div className="modal-header">
             <h2>{t('profile.changePassword')}</h2>
             <button className="close-button" onClick={handleClose}>
@@ -183,7 +197,6 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.currentPassword ? 'error' : ''}
                   placeholder={t('profile.currentPassword')}
-                  tabIndex={1}
                 />
                 <button
                   type="button"
@@ -212,7 +225,6 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.newPassword ? 'error' : ''}
                   placeholder={t('profile.newPassword')}
-                  tabIndex={2}
                 />
                 <button
                   type="button"
@@ -241,7 +253,6 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.confirmPassword ? 'error' : ''}
                   placeholder={t('profile.confirmNewPassword')}
-                  tabIndex={3}
                 />
                 <button
                   type="button"
@@ -284,6 +295,11 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       />
     </>
   );
+};
+
+ChangePasswordModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired
 };
 
 export default ChangePasswordModal;
