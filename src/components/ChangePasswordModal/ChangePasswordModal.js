@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import './ChangePasswordModal.css';
@@ -22,59 +22,75 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const currentPasswordRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && currentPasswordRef.current) {
-      setTimeout(() => {
-        currentPasswordRef.current.focus();
+      // Clear previous timeout if exists
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      
+      timeoutRef.current = setTimeout(() => {
+        currentPasswordRef.current?.focus();
       }, 100);
     }
+
+    // Cleanup timeout on unmount or when isOpen changes
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [isOpen]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e?.target || {};
+    if (!name) return;
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
     }
-  };
+  }, [errors]);
 
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = useCallback((field) => {
     setShowPasswords(prev => ({
       ...prev,
       [field]: !prev[field]
     }));
-  };
+  }, []);
 
   // Hàm kiểm tra mật khẩu mạnh
-  const isStrongPassword = (password) => {
+  const isStrongPassword = useCallback((password) => {
     return password.length >= 8 &&
       /[A-Z]/.test(password) &&
       /[a-z]/.test(password) &&
       /\d/.test(password) &&
       /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  };
+  }, []);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
 
-    if (!formData.currentPassword) {
+    if (!formData.currentPassword?.trim()) {
       newErrors.currentPassword = t('validation.required');
     }
 
-    if (!formData.newPassword) {
+    if (!formData.newPassword?.trim()) {
       newErrors.newPassword = t('validation.required');
     } else if (!isStrongPassword(formData.newPassword)) {
       newErrors.newPassword = t('validation.passwordStrength');
     }
 
-    if (!formData.confirmPassword) {
+    if (!formData.confirmPassword?.trim()) {
       newErrors.confirmPassword = t('validation.required');
     } else if (formData.newPassword !== formData.confirmPassword) {
       newErrors.confirmPassword = t('validation.passwordMismatch');
@@ -82,10 +98,10 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData, isStrongPassword, t]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(async (e) => {
+    e?.preventDefault();
 
     if (!validateForm()) {
       return;
@@ -115,11 +131,11 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       }
       
       // Xử lý lỗi từ server
-      if (data.error && data.error.includes('mật khẩu hiện tại')) {
+      if (data.error?.includes('mật khẩu hiện tại')) {
         setErrors({
           currentPassword: data.error
         });
-      } else if (data.error && data.error.includes('Mật khẩu mới phải có')) {
+      } else if (data.error?.includes('Mật khẩu mới phải có')) {
         setErrors({
           newPassword: data.error
         });
@@ -136,9 +152,9 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [formData, validateForm, t]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setFormData({
       currentPassword: '',
       newPassword: '',
@@ -151,11 +167,32 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       confirm: false
     });
     onClose();
-  };
+  }, [onClose]);
 
-  const handleSuccessClose = () => {
+  const handleSuccessClose = useCallback(() => {
     setShowSuccessModal(false);
-  };
+  }, []);
+
+  const handleOverlayKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') {
+      handleClose();
+    }
+  }, [handleClose]);
+
+  const handleOverlayClick = useCallback((e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  }, [handleClose]);
+
+  const handleModalClick = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
+
+  const handleModalKeyDown = useCallback((e) => {
+    // Chỉ ngăn chặn sự kiện lan ra ngoài, không xử lý gì thêm
+    e.stopPropagation();
+  }, []);
 
   if (!isOpen) return null;
 
@@ -163,29 +200,36 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     <>
       <div 
         className="modal-overlay" 
-        onClick={handleClose}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Escape' && handleClose()}
-        aria-label="Close modal"
+        onClick={handleOverlayClick}
+        onKeyDown={handleOverlayKeyDown}
+        role="presentation"
+        aria-hidden={!isOpen}
       >
         <div 
           className="change-password-modal" 
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleModalClick}
+          onKeyDown={handleModalKeyDown}
           role="dialog"
           aria-modal="true"
+          aria-labelledby="change-password-title"
+          tabIndex={-1}
         >
           <div className="modal-header">
-            <h2>{t('profile.changePassword')}</h2>
-            <button className="close-button" onClick={handleClose}>
-              <FaTimes />
+            <h2 id="change-password-title">{t('profile.changePassword')}</h2>
+            <button 
+              className="close-button" 
+              onClick={handleClose}
+              aria-label={t('common.close')}
+              title={t('common.close')}
+            >
+              <FaTimes aria-hidden="true" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="change-password-form">
+          <form onSubmit={handleSubmit} className="change-password-form" noValidate>
             <div className="form-group">
               <label htmlFor="currentPassword">
-                {t('profile.currentPassword')} *
+                {t('profile.currentPassword')} <span className="required" aria-hidden="true">*</span>
               </label>
               <div className="password-input-wrapper">
                 <input
@@ -197,24 +241,30 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.currentPassword ? 'error' : ''}
                   placeholder={t('profile.currentPassword')}
+                  aria-invalid={!!errors.currentPassword}
+                  aria-describedby={errors.currentPassword ? 'current-password-error' : undefined}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => togglePasswordVisibility('current')}
                   tabIndex={-1}
+                  aria-label={showPasswords.current ? t('common.hidePassword') : t('common.showPassword')}
                 >
-                  {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
+                  {showPasswords.current ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                 </button>
               </div>
               {errors.currentPassword && (
-                <span className="error-message">{errors.currentPassword}</span>
+                <span id="current-password-error" className="error-message" role="alert">
+                  {errors.currentPassword}
+                </span>
               )}
             </div>
 
             <div className="form-group">
               <label htmlFor="newPassword">
-                {t('profile.newPassword')} *
+                {t('profile.newPassword')} <span className="required" aria-hidden="true">*</span>
               </label>
               <div className="password-input-wrapper">
                 <input
@@ -225,24 +275,30 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.newPassword ? 'error' : ''}
                   placeholder={t('profile.newPassword')}
+                  aria-invalid={!!errors.newPassword}
+                  aria-describedby={errors.newPassword ? 'new-password-error' : undefined}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => togglePasswordVisibility('new')}
                   tabIndex={-1}
+                  aria-label={showPasswords.new ? t('common.hidePassword') : t('common.showPassword')}
                 >
-                  {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
+                  {showPasswords.new ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                 </button>
               </div>
               {errors.newPassword && (
-                <span className="error-message">{errors.newPassword}</span>
+                <span id="new-password-error" className="error-message" role="alert">
+                  {errors.newPassword}
+                </span>
               )}
             </div>
 
             <div className="form-group">
               <label htmlFor="confirmPassword">
-                {t('profile.confirmNewPassword')} *
+                {t('profile.confirmNewPassword')} <span className="required" aria-hidden="true">*</span>
               </label>
               <div className="password-input-wrapper">
                 <input
@@ -253,18 +309,24 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   className={errors.confirmPassword ? 'error' : ''}
                   placeholder={t('profile.confirmNewPassword')}
+                  aria-invalid={!!errors.confirmPassword}
+                  aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   className="password-toggle"
                   onClick={() => togglePasswordVisibility('confirm')}
                   tabIndex={-1}
+                  aria-label={showPasswords.confirm ? t('common.hidePassword') : t('common.showPassword')}
                 >
-                  {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
+                  {showPasswords.confirm ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <span className="error-message">{errors.confirmPassword}</span>
+                <span id="confirm-password-error" className="error-message" role="alert">
+                  {errors.confirmPassword}
+                </span>
               )}
             </div>
 
@@ -274,6 +336,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 className="cancel-button"
                 onClick={handleClose}
                 disabled={isLoading}
+                aria-label={t('common.cancel')}
               >
                 {t('common.cancel')}
               </button>
@@ -281,6 +344,8 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 type="submit"
                 className="submit-button"
                 disabled={isLoading}
+                aria-busy={isLoading}
+                aria-label={isLoading ? t('common.loading') : t('profile.changePassword')}
               >
                 {isLoading ? t('common.loading') : t('profile.changePassword')}
               </button>
