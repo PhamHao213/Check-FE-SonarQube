@@ -6,8 +6,62 @@ import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
 import SuccessModal from '../SuccessModal';
 import { API_BASE_URL } from '../../api/config';
 
+// Constants
+const PASSWORD_VALIDATION = {
+  MIN_LENGTH: 8,
+  PATTERNS: {
+    UPPERCASE: /[A-Z]/,
+    LOWERCASE: /[a-z]/,
+    DIGIT: /\d/,
+    SPECIAL: /[!@#$%^&*(),.?":{}|<>]/
+  }
+};
+
+// Utility functions
+const isStrongPassword = (password) => {
+  return password.length >= PASSWORD_VALIDATION.MIN_LENGTH &&
+    PASSWORD_VALIDATION.PATTERNS.UPPERCASE.test(password) &&
+    PASSWORD_VALIDATION.PATTERNS.LOWERCASE.test(password) &&
+    PASSWORD_VALIDATION.PATTERNS.DIGIT.test(password) &&
+    PASSWORD_VALIDATION.PATTERNS.SPECIAL.test(password);
+};
+
+const validatePasswordFields = (formData, t) => {
+  const errors = {};
+
+  if (!formData.currentPassword?.trim()) {
+    errors.currentPassword = t('validation.required');
+  }
+
+  if (!formData.newPassword?.trim()) {
+    errors.newPassword = t('validation.required');
+  } else if (!isStrongPassword(formData.newPassword)) {
+    errors.newPassword = t('validation.passwordStrength');
+  }
+
+  if (!formData.confirmPassword?.trim()) {
+    errors.confirmPassword = t('validation.required');
+  } else if (formData.newPassword !== formData.confirmPassword) {
+    errors.confirmPassword = t('validation.passwordMismatch');
+  }
+
+  return errors;
+};
+
+const handleServerError = (data, t) => {
+  if (data.error?.includes('mật khẩu hiện tại')) {
+    return { currentPassword: data.error };
+  } else if (data.error?.includes('Mật khẩu mới phải có')) {
+    return { newPassword: data.error };
+  } else {
+    return { currentPassword: data.error || t('toast.error') };
+  }
+};
+
 const ChangePasswordModal = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
+  
+  // State
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -21,12 +75,14 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
+  // Refs
   const currentPasswordRef = useRef(null);
   const timeoutRef = useRef(null);
 
+  // Effects
   useEffect(() => {
     if (isOpen && currentPasswordRef.current) {
-      // Clear previous timeout if exists
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -36,7 +92,6 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       }, 100);
     }
 
-    // Cleanup timeout on unmount or when isOpen changes
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -44,6 +99,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
+  // Handlers
   const handleInputChange = useCallback((e) => {
     const { name, value } = e?.target || {};
     if (!name) return;
@@ -68,93 +124,13 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     }));
   }, []);
 
-  // Hàm kiểm tra mật khẩu mạnh
-  const isStrongPassword = useCallback((password) => {
-    return password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /[a-z]/.test(password) &&
-      /\d/.test(password) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  }, []);
-
   const validateForm = useCallback(() => {
-    const newErrors = {};
-
-    if (!formData.currentPassword?.trim()) {
-      newErrors.currentPassword = t('validation.required');
-    }
-
-    if (!formData.newPassword?.trim()) {
-      newErrors.newPassword = t('validation.required');
-    } else if (!isStrongPassword(formData.newPassword)) {
-      newErrors.newPassword = t('validation.passwordStrength');
-    }
-
-    if (!formData.confirmPassword?.trim()) {
-      newErrors.confirmPassword = t('validation.required');
-    } else if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = t('validation.passwordMismatch');
-    }
-
+    const newErrors = validatePasswordFields(formData, t);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, isStrongPassword, t]);
+  }, [formData, t]);
 
-  const handleSubmit = useCallback(async (e) => {
-    e?.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          password: formData.currentPassword,
-          newPassword: formData.newPassword
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        handleClose();
-        setShowSuccessModal(true);
-        return;
-      }
-      
-      // Xử lý lỗi từ server
-      if (data.error?.includes('mật khẩu hiện tại')) {
-        setErrors({
-          currentPassword: data.error
-        });
-      } else if (data.error?.includes('Mật khẩu mới phải có')) {
-        setErrors({
-          newPassword: data.error
-        });
-      } else {
-        setErrors({
-          currentPassword: data.error || t('toast.error')
-        });
-      }
-    } catch (error) {
-      console.error('Change password error:', error);
-      setErrors({
-        currentPassword: t('toast.error')
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [formData, validateForm, t]);
-
-  const handleClose = useCallback(() => {
+  const resetForm = useCallback(() => {
     setFormData({
       currentPassword: '',
       newPassword: '',
@@ -166,8 +142,12 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       new: false,
       confirm: false
     });
+  }, []);
+
+  const handleClose = useCallback(() => {
+    resetForm();
     onClose();
-  }, [onClose]);
+  }, [onClose, resetForm]);
 
   const handleSuccessClose = useCallback(() => {
     setShowSuccessModal(false);
@@ -190,9 +170,100 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
   }, []);
 
   const handleModalKeyDown = useCallback((e) => {
-    // Chỉ ngăn chặn sự kiện lan ra ngoài, không xử lý gì thêm
     e.stopPropagation();
   }, []);
+
+  // API calls
+  const changePassword = useCallback(async () => {
+    const response = await fetch(`${API_BASE_URL}/users/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        password: formData.currentPassword,
+        newPassword: formData.newPassword
+      })
+    });
+
+    const data = await response.json();
+    return { response, data };
+  }, [formData]);
+
+  const handleSubmit = useCallback(async (e) => {
+    e?.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { response, data } = await changePassword();
+
+      if (response.ok) {
+        handleClose();
+        setShowSuccessModal(true);
+        return;
+      }
+      
+      const serverErrors = handleServerError(data, t);
+      setErrors(serverErrors);
+    } catch (error) {
+      console.error('Change password error:', error);
+      setErrors({
+        currentPassword: t('toast.error')
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [validateForm, changePassword, handleClose, t]);
+
+  // Render helpers
+  const renderPasswordInput = useCallback((field, label, ref = null) => {
+    const fieldName = field === 'current' ? 'currentPassword' 
+                    : field === 'new' ? 'newPassword' 
+                    : 'confirmPassword';
+    
+    return (
+      <div className="form-group">
+        <label htmlFor={fieldName}>
+          {label} <span className="required" aria-hidden="true">*</span>
+        </label>
+        <div className="password-input-wrapper">
+          <input
+            ref={ref}
+            type={showPasswords[field] ? 'text' : 'password'}
+            id={fieldName}
+            name={fieldName}
+            value={formData[fieldName]}
+            onChange={handleInputChange}
+            className={errors[fieldName] ? 'error' : ''}
+            placeholder={label}
+            aria-invalid={!!errors[fieldName]}
+            aria-describedby={errors[fieldName] ? `${fieldName}-error` : undefined}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => togglePasswordVisibility(field)}
+            tabIndex={-1}
+            aria-label={showPasswords[field] ? t('common.hidePassword') : t('common.showPassword')}
+          >
+            {showPasswords[field] ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+          </button>
+        </div>
+        {errors[fieldName] && (
+          <span id={`${fieldName}-error`} className="error-message" role="alert">
+            {errors[fieldName]}
+          </span>
+        )}
+      </div>
+    );
+  }, [formData, showPasswords, errors, isLoading, handleInputChange, togglePasswordVisibility, t]);
 
   if (!isOpen) return null;
 
@@ -227,108 +298,9 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="change-password-form" noValidate>
-            <div className="form-group">
-              <label htmlFor="currentPassword">
-                {t('profile.currentPassword')} <span className="required" aria-hidden="true">*</span>
-              </label>
-              <div className="password-input-wrapper">
-                <input
-                  ref={currentPasswordRef}
-                  type={showPasswords.current ? 'text' : 'password'}
-                  id="currentPassword"
-                  name="currentPassword"
-                  value={formData.currentPassword}
-                  onChange={handleInputChange}
-                  className={errors.currentPassword ? 'error' : ''}
-                  placeholder={t('profile.currentPassword')}
-                  aria-invalid={!!errors.currentPassword}
-                  aria-describedby={errors.currentPassword ? 'current-password-error' : undefined}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => togglePasswordVisibility('current')}
-                  tabIndex={-1}
-                  aria-label={showPasswords.current ? t('common.hidePassword') : t('common.showPassword')}
-                >
-                  {showPasswords.current ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
-                </button>
-              </div>
-              {errors.currentPassword && (
-                <span id="current-password-error" className="error-message" role="alert">
-                  {errors.currentPassword}
-                </span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="newPassword">
-                {t('profile.newPassword')} <span className="required" aria-hidden="true">*</span>
-              </label>
-              <div className="password-input-wrapper">
-                <input
-                  type={showPasswords.new ? 'text' : 'password'}
-                  id="newPassword"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleInputChange}
-                  className={errors.newPassword ? 'error' : ''}
-                  placeholder={t('profile.newPassword')}
-                  aria-invalid={!!errors.newPassword}
-                  aria-describedby={errors.newPassword ? 'new-password-error' : undefined}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => togglePasswordVisibility('new')}
-                  tabIndex={-1}
-                  aria-label={showPasswords.new ? t('common.hidePassword') : t('common.showPassword')}
-                >
-                  {showPasswords.new ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
-                </button>
-              </div>
-              {errors.newPassword && (
-                <span id="new-password-error" className="error-message" role="alert">
-                  {errors.newPassword}
-                </span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="confirmPassword">
-                {t('profile.confirmNewPassword')} <span className="required" aria-hidden="true">*</span>
-              </label>
-              <div className="password-input-wrapper">
-                <input
-                  type={showPasswords.confirm ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className={errors.confirmPassword ? 'error' : ''}
-                  placeholder={t('profile.confirmNewPassword')}
-                  aria-invalid={!!errors.confirmPassword}
-                  aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => togglePasswordVisibility('confirm')}
-                  tabIndex={-1}
-                  aria-label={showPasswords.confirm ? t('common.hidePassword') : t('common.showPassword')}
-                >
-                  {showPasswords.confirm ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <span id="confirm-password-error" className="error-message" role="alert">
-                  {errors.confirmPassword}
-                </span>
-              )}
-            </div>
+            {renderPasswordInput('current', t('profile.currentPassword'), currentPasswordRef)}
+            {renderPasswordInput('new', t('profile.newPassword'))}
+            {renderPasswordInput('confirm', t('profile.confirmNewPassword'))}
 
             <div className="form-actions">
               <button
