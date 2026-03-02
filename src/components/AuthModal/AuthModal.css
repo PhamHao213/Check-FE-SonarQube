@@ -51,9 +51,9 @@
 }
 
 .lang-btn.active {
-  background: #007bff;
+  background: #0056b3;  /* Đã fix - màu xanh đậm hơn */
   color: white;
-  border-color: #007bff;
+  border-color: #0056b3;
 }
 
 .auth-modal-header h2 {
@@ -156,12 +156,12 @@
 }
 
 .auth-btn-guest {
-  background-color: #6c757d;
+  background-color: #495057;  /* Đã fix - màu xám đậm hơn */
   color: white;
 }
 
 .auth-btn-guest:hover {
-  background-color: #545b62;
+  background-color: #343a40;
 }
 
 @media (max-width: 768px) {

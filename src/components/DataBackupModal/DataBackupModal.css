@@ -54,14 +54,14 @@
   align-items: flex-start;
   padding: 28px 32px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  background: linear-gradient(135deg, #1e2b38 0%, #2c3e50 100%); /* Tối hơn để tăng contrast */
   color: white;
   border-radius: 16px 16px 0 0;
 }
 
 .data-backup-modal-header h2 {
   margin: 0;
-  color: white;
+  color: #ffffff; /* Thay white bằng #ffffff */
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.5px;
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
+  color: #ffffff; /* Thay white bằng #ffffff */
   font-size: 20px;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
@@ -123,7 +123,7 @@
 
 .export-info h3 {
   margin: 0 0 16px 0;
-  color: #2c3e50;
+  color: #1e2b38;
   font-size: 20px;
   font-weight: 600;
   display: flex;
@@ -145,7 +145,7 @@
 
 .export-info p {
   margin: 0 0 16px 0;
-  color: rgba(0, 0, 0, 0.6);
+  color: #4a4a4a; /* Đã fix - màu tối hơn thay vì rgba(0,0,0,0.6) */
   font-size: 15px;
   line-height: 1.6;
 }
@@ -161,7 +161,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px 0;
-  color: rgba(0, 0, 0, 0.7);
+  color: #3a3a3a; /* Đã fix - màu tối hơn thay vì rgba(0,0,0,0.7) */
   font-size: 15px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -176,7 +176,7 @@
   height: 20px;
   border-radius: 50%;
   background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-  color: white;
+  color: #ffffff; /* Thay white bằng #ffffff */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,6 +194,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  color: #1e2b38; /* Thêm màu text */
 }
 
 .workspace-info::before {
@@ -209,7 +210,7 @@
 }
 
 .workspace-info strong {
-  color: #2c3e50;
+  color: #1e2b38;
   font-weight: 600;
 }
 
@@ -224,8 +225,8 @@
 }
 
 .cancel-export-btn {
-  background: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.7);
+  background: #e9ecef; /* Màu nền solid */
+  color: #1e2b38; /* Đã fix - màu tối hơn thay vì rgba(0,0,0,0.7) */
   border: none;
   padding: 12px 24px;
   border-radius: 10px;
@@ -237,13 +238,13 @@
 }
 
 .cancel-export-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: #dee2e6;
   transform: translateY(-1px);
 }
 
 .export-btn {
-  background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
-  color: white;
+  background: linear-gradient(135deg, #2980b9 0%, #27ae60 100%); /* Màu tối hơn */
+  color: #ffffff; /* Thay white bằng #ffffff */
   border: none;
   padding: 12px 32px;
   border-radius: 10px;
@@ -269,18 +270,19 @@
 }
 
 .export-btn:disabled {
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.3);
+  background: #6c757d; /* Màu xám đậm hơn */
+  color: #f8f9fa; /* Màu sáng hơn để tăng contrast */
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
+  opacity: 0.8;
 }
 
 .loading-spinner {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
+  border-top: 2px solid #ffffff; /* Thay white bằng #ffffff */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
