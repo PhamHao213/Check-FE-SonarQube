@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import './AffectiveScoreCard.css';
 import { affectiveScoreCardApi } from '../../api/affectiveScoreCardApi';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +49,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
   const batches = Array.isArray(sessionData?.batches) ? sessionData.batches : [];
   const [selectedBatchId, setSelectedBatchId] = useState(batches[0]?.batch_id || '');
   const [previousBatchId, setPreviousBatchId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [existingScoreCardId, setExistingScoreCardId] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [batchCompletionStatus, setBatchCompletionStatus] = useState({});
@@ -292,7 +293,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
     }
 
     const result = await affectiveScoreCardApi.getBySessionBatch(sessionData.sessionId, selectedBatchId);
-    
+
     if (!result.success || result.data.length === 0) {
       resetFormData();
       setUserHasScored(false);
@@ -354,14 +355,21 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
   const handleDefectChange = (type, value, isChecked) => {
     setFormData(prev => {
       let newValue;
-      
+
       if (type === 'types') {
         newValue = value;
       } else {
         const currentArray = prev.defect[type] || [];
-        newValue = isChecked 
-          ? (currentArray.includes(value) ? currentArray : [...currentArray, value])
-          : currentArray.filter(item => item !== value);
+
+        if (isChecked) {
+          if (currentArray.includes(value)) {
+            newValue = currentArray;
+          } else {
+            newValue = [...currentArray, value];
+          }
+        } else {
+          newValue = currentArray.filter(item => item !== value);
+        }
       }
 
       const newFormData = {
@@ -595,7 +603,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.fragrance_aroma?.fragrance_intensity || 1}
-                        onChange={(e) => handleSliderChange('fragrance', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('fragrance', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -630,7 +638,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.fragrance_aroma?.aroma_intensity || 1}
-                        onChange={(e) => handleSliderChange('aroma', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('aroma', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -678,7 +686,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.flavor_aftertaste?.flavor_intensity || 1}
-                        onChange={(e) => handleSliderChange('flavor', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('flavor', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -713,7 +721,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.flavor_aftertaste?.aftertaste_intensity || 1}
-                        onChange={(e) => handleSliderChange('aftertaste', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('aftertaste', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -761,7 +769,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.acidity.intensity}
-                        onChange={(e) => handleSliderChange('acidity', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('acidity', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -803,7 +811,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.sweetness.intensity}
-                        onChange={(e) => handleSliderChange('sweetness', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('sweetness', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -851,7 +859,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.mouthfeel.intensity}
-                        onChange={(e) => handleSliderChange('mouthfeel', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('mouthfeel', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -893,7 +901,7 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
                         min="1"
                         max="9"
                         value={formData.overall.intensity}
-                        onChange={(e) => handleSliderChange('overall', parseInt(e.target.value))}
+                        onChange={(e) => handleSliderChange('overall', Number.parseInt(e.target.value, 10))}
                         className="affective-slider"
                         disabled={fieldDisabled}
                       />
@@ -1024,6 +1032,18 @@ const AffectiveScoreCard = ({ sessionData, onSubmit, onCancel, submitting = fals
       )}
     </div>
   );
+};
+
+AffectiveScoreCard.propTypes = {
+  sessionData: PropTypes.shape({
+    sessionId: PropTypes.string,
+    batches: PropTypes.array,
+    isShare: PropTypes.bool,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  submitting: PropTypes.bool,
+  isGuestCompleted: PropTypes.bool
 };
 
 export default AffectiveScoreCard;
