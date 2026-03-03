@@ -11,6 +11,7 @@ import GreenBeans from './pages/GreenBeans';
 import GreenBatch from './pages/GreenBatch';
 import CuppingSession from './pages/CuppingSession';
 import Vendor from './pages/Vendor';
+import Warehouse from './pages/Warehouse';
 import Login from './pages/Login';
 import Organization from './pages/Organization';
 import Register from './pages/Register';
@@ -1087,6 +1088,7 @@ const MainLayout = ({ children, selectedContext, onContextSelect }) => {
     else if (path.includes('/gbblist')) setActiveTab('gbblist');
     else if (path.includes('/session')) setActiveTab('session');
     else if (path.includes('/vendor')) setActiveTab('vendor');
+    else if (path.includes('/warehouse')) setActiveTab('warehouse');
     else if (path.includes('/organization')) setActiveTab('organization');
   }, [location]);
 
@@ -1294,6 +1296,7 @@ function App() {
         <Route path="/gbblist" element={<Navigate to="/personal/gbblist" replace />} />
         <Route path="/session" element={<Navigate to="/personal/session" replace />} />
         <Route path="/vendor" element={<Navigate to="/personal/vendor" replace />} />
+        <Route path="/warehouse" element={<Navigate to="/personal/warehouse" replace />} />
 
         {/* Routes cá nhân */}
         <Route path="/personal/session" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><CuppingSession selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
@@ -1312,6 +1315,7 @@ function App() {
         <Route path="/personal/gblist/:green_bean_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><GreenBeanDetailPage /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/personal/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization/:org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
 
@@ -1332,6 +1336,7 @@ function App() {
         <Route path="/org/:org_id/gblist/:green_bean_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><GreenBeanDetailPage /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/org/:org_id/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization/:detail_org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
       </Routes>

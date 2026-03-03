@@ -913,6 +913,10 @@ const CuppingForm = ({ sessionData, onBack, onSubmit }) => {
       let result;
       if (isSharePage && !authStatus) {
         // Trường hợp guest thực sự (chưa đăng nhập) - dùng guest API
+        // Lưu cupper name vào localStorage để liên kết sau khi đăng ký
+        if (batch.cupper) {
+          localStorage.setItem('guest_cupper_name', batch.cupper);
+        }
         result = await cuppingApi.createGuest(submitData);
       } else {
         // Trường hợp người đăng nhập chấm - kiểm tra xem có phiếu chấm của user này chưa

@@ -95,10 +95,16 @@ const Register = ({ onRegisterSuccess }) => {
     try {
       const { confirmPassword, ...registerData } = formData;
 
-      // Lấy guest_session_id từ localStorage hoặc URL params nếu có
+      // Lấy guest_session_id và guest_cupper_name từ localStorage hoặc URL params nếu có
       const guestSessionId = sessionId || localStorage.getItem('guest_session_id');
+      const guestCupperName = localStorage.getItem('guest_cupper_name');
+      
       if (guestSessionId) {
         registerData.guest_session_id = guestSessionId;
+      }
+      
+      if (guestCupperName) {
+        registerData.guest_cupper_name = guestCupperName;
       }
 
       // Thêm thông tin tổ chức nếu có
@@ -116,8 +122,9 @@ const Register = ({ onRegisterSuccess }) => {
       });
 
       if (response.ok) {
-        // Xóa guest_session_id sau khi đăng ký thành công
+        // Xóa guest_session_id và guest_cupper_name sau khi đăng ký thành công
         localStorage.removeItem('guest_session_id');
+        localStorage.removeItem('guest_cupper_name');
         showToast(
           t('register.register_success'),
           'success'

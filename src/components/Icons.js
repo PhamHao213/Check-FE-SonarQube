@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaCoffee, FaLeaf, FaBox, FaClipboardList, FaMapMarkerAlt, FaCalendarAlt, FaEdit, FaTrash, FaSearch, FaFilter, FaSortAmountDown, FaArrowLeft, FaMountain, FaEye, FaEyeSlash, FaStore } from 'react-icons/fa';
+import { FaCoffee, FaLeaf, FaBox, FaClipboardList, FaMapMarkerAlt, FaCalendarAlt, FaEdit, FaTrash, FaSearch, FaFilter, FaSortAmountDown, FaArrowLeft, FaMountain, FaEye, FaEyeSlash, FaStore, FaWarehouse } from 'react-icons/fa';
 
 // Icon cà phê (cho Header logo)
 export const CoffeeIcon = ({ color = '#1F429B', opacity = 1, size = 32 }) => (
@@ -163,6 +163,18 @@ export const EyeSlashIcon = ({ color = '#6c757d', size = 16 }) => (
 // Icon cửa hàng (cho Vendor)
 export const VendorIcon = ({ color = '#FBB217', opacity = 0.6, size = 32 }) => (
   <FaStore
+    size={size}
+    style={{
+      color: color,
+      opacity: opacity,
+      fontWeight: 'bold'
+    }}
+  />
+);
+
+// Icon kho (cho Warehouse)
+export const WarehouseIcon = ({ color = '#dc3545', opacity = 0.6, size = 32 }) => (
+  <FaWarehouse
     size={size}
     style={{
       color: color,
