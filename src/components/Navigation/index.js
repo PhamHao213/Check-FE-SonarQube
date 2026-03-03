@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './Navigation.css';
-import { LeafIcon, BoxIcon, ClipboardIcon, VendorIcon } from '../Icons';
+import { LeafIcon, BoxIcon, ClipboardIcon, VendorIcon, WarehouseIcon } from '../Icons';
 import OrganizationSelector from '../OrganizationSelector';
 
 const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, isDetailPage, isFormOpen }) => {
@@ -35,6 +35,13 @@ const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, 
       icon: <VendorIcon color="#FFFFFF" opacity={1} size={18} />,
       color: '#6f42c1',
       number: '4'
+    },
+    { 
+      uuid: 'warehouse', 
+      label: t('navigation.warehouse') || 'Xuất nhập kho', 
+      icon: <WarehouseIcon color="#FFFFFF" opacity={1} size={18} />,
+      color: '#dc3545',
+      number: '5'
     },
   ];
 

@@ -188,6 +188,7 @@
     "greenBatch": "Lô nhân xanh",
     "cuppingSession": "Phiên nếm thử",
     "vendor": "Nhà cung cấp",
+    "warehouse": "Quản lý kho",
     "organization": "Tổ chức",
     "personal": "Cá nhân",
     "dashboard": "Bảng điều khiển"
@@ -3276,5 +3277,22 @@
     "successAfterDeletion": "Đã ghi nhận yêu cầu xóa tài khoản và hành động cho organization!",
     "error": "Có lỗi xảy ra",
     "requestError": "Có lỗi xảy ra khi gửi yêu cầu"
+  },
+  "warehouse": {
+    "title": "Quản lí kho",
+    "subtitle": "Tạo và quản lý các phiếu nhập xuất kho",
+    "import": "Nhập kho",
+    "export": "Xuất kho",
+    "searchPlaceholder": "Tìm kiếm theo tên nhân xanh, mã phiếu......",
+    "filter": "Bộ lọc",
+    "sort": "Ngày (mới nhất)",
+    "noData": "Chưa có phiếu kho nào",
+    "noDataDesc": "Hiện tại hệ thống chưa ghi nhận phiếu nhập kho và xuất kho nào, hoặc không có kết quả nào khớp với bộ lọc của bạn.",
+    "noImportReceipt": "Chưa có phiếu nhập kho nào",
+    "noImportReceiptDesc": "Hiện tại hệ thống chưa ghi nhận phiếu nhập kho nào, hoặc không có kết quả nào khớp với bộ lọc của bạn.",
+    "noExportReceipt": "Chưa có phiếu xuất kho nào",
+    "noExportReceiptDesc": "Hiện tại hệ thống chưa ghi nhận phiếu xuất kho nào, hoặc không có kết quả nào khớp với bộ lọc của bạn.",
+    "createImportReceipt": "Tạo phiếu nhập kho",
+    "createExportReceipt": "Tạo phiếu xuất kho"
   }
 }

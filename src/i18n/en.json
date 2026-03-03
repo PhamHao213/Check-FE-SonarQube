@@ -174,6 +174,7 @@
     "greenBatch": "Batch",
     "cuppingSession": "Cupping Session",
     "vendor": "Vendor",
+    "warehouse": "Warehouse Management",
     "organization": "Organization",
     "personal": "Personal",
     "dashboard": "Dashboard"
@@ -3265,5 +3266,22 @@
     "successAfterDeletion": "Account deletion request and organization actions recorded!",
     "error": "An error occurred",
     "requestError": "An error occurred while sending request"
+  },
+  "warehouse": {
+    "title": "Warehouse Management",
+    "subtitle": "Create and manage import/export receipts",
+    "import": "Import",
+    "export": "Export",
+    "searchPlaceholder": "Search by green bean name, receipt code......",
+    "filter": "Filter",
+    "sort": "Date (newest)",
+    "noData": "No warehouse receipts yet",
+    "noDataDesc": "Currently the system has not recorded any import or export receipts, or there are no results matching your filter.",
+    "noImportReceipt": "No import receipts yet",
+    "noImportReceiptDesc": "Currently the system has not recorded any import receipts, or there are no results matching your filter.",
+    "noExportReceipt": "No export receipts yet",
+    "noExportReceiptDesc": "Currently the system has not recorded any export receipts, or there are no results matching your filter.",
+    "createImportReceipt": "Create import receipt",
+    "createExportReceipt": "Create export receipt"
   }
 }
