@@ -3281,8 +3281,8 @@
   "warehouse": {
     "title": "Quản lí kho",
     "subtitle": "Tạo và quản lý các phiếu nhập xuất kho",
-    "import": "Nhập kho",
-    "export": "Xuất kho",
+    "import": "Tạo phiếu nhập",
+    "export": "Tạo phiếu xuất",
     "searchPlaceholder": "Tìm kiếm theo tên nhân xanh, mã phiếu......",
     "filter": "Bộ lọc",
     "sort": "Ngày (mới nhất)",
@@ -3293,6 +3293,15 @@
     "noExportReceipt": "Chưa có phiếu xuất kho nào",
     "noExportReceiptDesc": "Hiện tại hệ thống chưa ghi nhận phiếu xuất kho nào, hoặc không có kết quả nào khớp với bộ lọc của bạn.",
     "createImportReceipt": "Tạo phiếu nhập kho",
-    "createExportReceipt": "Tạo phiếu xuất kho"
+    "createExportReceipt": "Tạo phiếu xuất kho",
+    "cancelTicket": "Hủy phiếu",
+    "status": "Trạng thái",
+    "active": "Đang hoạt động",
+    "cancelled": "Đã hủy",
+    "alreadyCancelled": "Phiếu này đã được hủy",
+    "cancelTicketTooltip": "Hủy phiếu nhập/xuất kho",
+    "editTicketTooltip": "Chỉnh sửa thông tin phiếu",
+    "deleteTicketTooltip": "Xóa phiếu vĩnh viễn"
   }
+  
 }

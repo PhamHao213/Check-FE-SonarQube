@@ -1,0 +1,209 @@
+.create-export-form {
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgba(121, 121, 121, 0.05);
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.create-export-form .form-wrapper {
+  max-width: 800px;
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(121, 121, 121, 0.1);
+}
+
+.create-export-form .back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(121, 121, 121, 0.3);
+  border-radius: 8px;
+  color: #797979;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+
+.create-export-form .back-button:hover {
+  background-color: rgba(121, 121, 121, 0.05);
+  border-color: #797979;
+}
+
+.create-export-form .form-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.create-export-form .form-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.create-export-form .form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.create-export-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-export-form .form-group label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.create-export-form .form-group input,
+.create-export-form .form-group select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.create-export-form .form-group input:focus,
+.create-export-form .form-group select:focus {
+  outline: none;
+  border-color: #1F429B;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(31, 66, 155, 0.1);
+}
+
+.create-export-form .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.create-export-form .section-header label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.create-export-form .add-button {
+  padding: 8px 16px;
+  background-color: #1F429B;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-export-form .add-button:hover {
+  background-color: rgba(31, 66, 155, 0.9);
+}
+
+.create-export-form .batch-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.create-export-form .batch-row select,
+.create-export-form .batch-row input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+}
+
+.create-export-form .batch-row select:focus,
+.create-export-form .batch-row input:focus {
+  outline: none;
+  border-color: #1F429B;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(31, 66, 155, 0.1);
+}
+
+.create-export-form .remove-button {
+  padding: 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.create-export-form .remove-button:hover {
+  background-color: #dc2626;
+}
+
+.create-export-form .form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 32px;
+}
+
+.create-export-form .submit-button {
+  background-color: #1F429B;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.create-export-form .cancel-button {
+  background-color: transparent;
+  color: #6c757d;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.create-export-form .submit-button:hover:not(:disabled) {
+  background-color: rgba(31, 66, 155, 0.9);
+}
+
+.create-export-form .cancel-button:hover {
+  color: #495057;
+}
+
+.create-export-form .submit-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .create-export-form .form-wrapper {
+    padding: 24px;
+  }
+}

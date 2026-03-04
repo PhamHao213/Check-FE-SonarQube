@@ -3270,8 +3270,8 @@
   "warehouse": {
     "title": "Warehouse Management",
     "subtitle": "Create and manage import/export receipts",
-    "import": "Import",
-    "export": "Export",
+    "import": "Create Input Form",
+    "export": "Create Export Form",
     "searchPlaceholder": "Search by green bean name, receipt code......",
     "filter": "Filter",
     "sort": "Date (newest)",
@@ -3283,5 +3283,7 @@
     "noExportReceiptDesc": "Currently the system has not recorded any export receipts, or there are no results matching your filter.",
     "createImportReceipt": "Create import receipt",
     "createExportReceipt": "Create export receipt"
+    
+    
   }
 }

@@ -12,6 +12,7 @@ import GreenBatch from './pages/GreenBatch';
 import CuppingSession from './pages/CuppingSession';
 import Vendor from './pages/Vendor';
 import Warehouse from './pages/Warehouse';
+import WarehouseDetail from './pages/Warehouse/WarehouseDetail';
 import Login from './pages/Login';
 import Organization from './pages/Organization';
 import Register from './pages/Register';
@@ -1316,6 +1317,7 @@ function App() {
         <Route path="/personal/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/personal/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization/:org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
 
@@ -1337,6 +1339,7 @@ function App() {
         <Route path="/org/:org_id/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/org/:org_id/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization/:detail_org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
       </Routes>
