@@ -1046,11 +1046,16 @@ HeaderOnlyLayout.propTypes = {
   })
 };
 
-const MainLayout = ({ children, selectedContext, onContextSelect }) => {
+const MainLayout = ({ children, selectedContext, onContextSelect, disableOrgSwitch }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('gblist');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [orgSwitchDisabled, setOrgSwitchDisabled] = useState(disableOrgSwitch || false);
+
+  useEffect(() => {
+    setOrgSwitchDisabled(disableOrgSwitch || false);
+  }, [disableOrgSwitch]);
 
   // Kiểm tra xem có đang ở trang chi tiết không
   const isDetailPage = () => {
@@ -1137,7 +1142,7 @@ const MainLayout = ({ children, selectedContext, onContextSelect }) => {
 
   return (
     <div className="App">
-      <Header selectedContext={selectedContext} />
+      <Header selectedContext={selectedContext} disableOrgSwitch={orgSwitchDisabled} />
       <Navigation
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -1145,8 +1150,11 @@ const MainLayout = ({ children, selectedContext, onContextSelect }) => {
         onContextSelect={onContextSelect}
         isDetailPage={isDetailPage()}
         isFormOpen={isFormOpen}
+        disableOrgSwitch={orgSwitchDisabled}
       />
-      <div className="App-content">{children}</div>
+      <div className="App-content">
+        {React.cloneElement(children, { onDisableOrgSwitch: setOrgSwitchDisabled })}
+      </div>
       <Footer />
       <Toast />
     </div>
@@ -1317,7 +1325,7 @@ function App() {
         <Route path="/personal/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
-        <Route path="/personal/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/personal/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect} disableOrgSwitch={true}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/personal/organization/:org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
 
@@ -1339,7 +1347,7 @@ function App() {
         <Route path="/org/:org_id/vendor" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Vendor selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/vendorlist/:vendor_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><VendorDetailPage selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/warehouse" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Warehouse selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
-        <Route path="/org/:org_id/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
+        <Route path="/org/:org_id/warehouse/:ticket_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect} disableOrgSwitch={true}><WarehouseDetail selectedContext={selectedContext} /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
         <Route path="/org/:org_id/organization/:detail_org_id" element={<ProtectedRoute><MainLayout selectedContext={selectedContext} onContextSelect={handleContextSelect}><Organization /></MainLayout></ProtectedRoute>} />
       </Routes>

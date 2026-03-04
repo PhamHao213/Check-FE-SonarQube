@@ -4,7 +4,7 @@ import './Navigation.css';
 import { LeafIcon, BoxIcon, ClipboardIcon, VendorIcon, WarehouseIcon } from '../Icons';
 import OrganizationSelector from '../OrganizationSelector';
 
-const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, isDetailPage, isFormOpen }) => {
+const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, isDetailPage, isFormOpen, disableOrgSwitch }) => {
   const { t } = useTranslation();
   
   const tabs = [
@@ -46,6 +46,9 @@ const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, 
   ];
 
   const getDisabledReason = () => {
+    if (disableOrgSwitch) {
+      return "Không thể chuyển tổ chức khi đang ở màn hình này";
+    }
     if (isFormOpen) {
       return "Không thể chuyển tổ chức khi đang tạo/chỉnh sửa";
     }
@@ -74,7 +77,7 @@ const Navigation = ({ activeTab, onTabChange, selectedContext, onContextSelect, 
           <OrganizationSelector 
             selectedContext={selectedContext}
             onContextSelect={onContextSelect}
-            disabled={isDetailPage || isFormOpen}
+            disabled={isDetailPage || isFormOpen || disableOrgSwitch}
             disabledReason={getDisabledReason()}
           />
         </div>

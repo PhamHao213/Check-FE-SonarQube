@@ -202,20 +202,73 @@
 .tickets-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px 0;
+  gap: 12px;
 }
 
 .ticket-card {
-  background: white;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
+  display: flex;
+  align-items: stretch;
   padding: 16px;
-  transition: box-shadow 0.2s;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 80px;
 }
 
 .ticket-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #cac4c4;
+  transform: translateY(-2px);
+}
+
+.ticket-card-icon {
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(1, 88, 164, 0.2);
+  border-radius: 50%;
+}
+
+.ticket-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.ticket-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ticket-name {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #212529;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+.ticket-details {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.ticket-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .ticket-header {
@@ -251,52 +304,204 @@
   }
 
   .warehouse-header {
+    background-color: #FFFFFF;
+    padding: 20px 16px;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(121, 121, 121, 0.2);
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 16px;
   }
 
   .warehouse-header-left {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
     width: 100%;
   }
 
+  .warehouse-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .warehouse-info h2 {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .warehouse-info p {
+    font-size: 13px;
+    margin: 4px 0 0 0;
+  }
+
   .warehouse-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 100%;
   }
 
   .action-btn {
-    flex: 1;
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    min-height: 48px;
+    font-weight: 600;
   }
 
   .warehouse-search-bar {
+    background: white;
+    padding: 16px;
+    margin: 0 0 12px 0;
     flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
   }
 
   .warehouse-search {
     width: 100%;
   }
 
-  .warehouse-filters {
+  .warehouse-search .search-input {
     width: 100%;
+    padding: 14px 16px 14px 44px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 16px;
+    min-height: 48px;
+    box-sizing: border-box;
+  }
+
+  .warehouse-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .filter-btn,
+  .sort-btn {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    justify-content: center;
+    min-height: 48px;
+    font-weight: bold;
   }
 
   .warehouse-empty {
     padding: 60px 16px;
   }
+
+  .tickets-list {
+    gap: 12px;
+  }
+
+  .ticket-card {
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .ticket-card-icon {
+    display: none;
+  }
+
+  .ticket-info {
+    text-align: center;
+    width: 100%;
+  }
+
+  .ticket-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .ticket-name {
+    font-size: 18px;
+    text-align: center;
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    color: #212529;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  .ticket-details {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
 }
 
 @media (max-width: 480px) {
+  .warehouse-page {
+    padding: 0;
+  }
+
   .warehouse-wrapper {
     padding: 0;
     border-radius: 0;
   }
 
+  .warehouse-header {
+    padding: 16px 12px;
+  }
+
   .warehouse-icon {
-    width: 56px;
-    height: 56px;
+    width: 36px;
+    height: 36px;
   }
 
   .warehouse-info h2 {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .warehouse-info p {
+    font-size: 12px;
+  }
+
+  .warehouse-search-bar {
+    padding: 12px;
+    margin: 0 0 8px 0;
+  }
+
+  .warehouse-search .search-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    font-size: 16px;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+  }
+
+  .filter-btn,
+  .sort-btn {
+    font-size: 13px;
+    padding: 10px 12px;
+    min-height: 44px;
   }
 
   .warehouse-empty {
@@ -306,6 +511,32 @@
   .empty-icon svg {
     width: 80px;
     height: 80px;
+  }
+
+  .ticket-card {
+    padding: 12px;
+    margin-bottom: 6px;
+  }
+
+  .ticket-card-icon {
+    display: none;
+  }
+
+  .ticket-name {
+    font-size: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  .ticket-details {
+    font-size: 13px;
+  }
+
+  .cs_pagination-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-height: 40px;
   }
 }
 

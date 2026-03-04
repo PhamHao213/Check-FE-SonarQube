@@ -317,7 +317,8 @@
     "nameRequired": "Vendor name is required",
     "invalidPhoneNumber": "Invalid phone number format",
     "selectMethod": "Select generation method",
-    "createDesc": "Create a new green bean"
+    "createDesc": "Create a new green bean",
+    "greenBean": "Green Bean"
   },
   "greenBatch": {
     "title": "Green Bean Batch Management",
@@ -3282,8 +3283,41 @@
     "noExportReceipt": "No export receipts yet",
     "noExportReceiptDesc": "Currently the system has not recorded any export receipts, or there are no results matching your filter.",
     "createImportReceipt": "Create import receipt",
-    "createExportReceipt": "Create export receipt"
-    
-    
+    "createExportReceipt": "Create export receipt",
+    "importReceipt": "Import Receipt",
+    "exportReceipt": "Export Receipt",
+    "cancelTicket": "Cancel Receipt",
+    "information": "Information",
+    "ticketCode": "Ticket Code",
+    "date": "Date",
+    "type": "Receipt Type",
+    "status": "Status",
+    "active": "Active",
+    "cancelled": "Cancelled",
+    "details": "Details",
+    "quantity": "Quantity",
+    "editTicket": "Edit Receipt",
+    "cancelTooltipText": "This action will cancel the receipt and cannot be undone. Please review carefully before proceeding.",
+    "confirmCancelTicket": "Confirm Receipt Cancellation",
+    "confirmDelete": "Confirm Deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete receipt {{code}}? This action cannot be undone.",
+    "importDate": "Import Date",
+    "batches": "Batches",
+    "addBatch": "Add Batch",
+    "selectBatch": "Select Batch",
+    "exportDate": "Export Date",
+    "stock": "Stock",
+    "sales": "Sales",
+    "rawMaterials": "Raw Materials",
+    "qualityControl": "Quality Control",
+    "import1": "Import Receipt",
+    "export1": "Export Receipt",
+    "createImportSuccess": "Import receipt created successfully",
+    "createError": "Failed to create receipt. Please try again.",
+    "createExportSuccess": "Export receipt created successfully",
+    "searchBatch": "Search Batch",
+    "cancelTicketTooltip": "Cancel this import/export receipt",
+    "editTicketTooltip": "Edit receipt information",
+    "deleteTicketTooltip": "Delete this receipt permanently"
   }
 }

@@ -10,7 +10,7 @@ import { batchApi } from '../../api/batchApi';
 import { policyApi } from '../../api/policyApi';
 import './Warehouse.css';
 
-const Warehouse = ({ selectedContext }) => {
+const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState(null);
@@ -23,10 +23,17 @@ const Warehouse = ({ selectedContext }) => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [sortOrder, setSortOrder] = useState('newest');
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: ''
   });
+
+  useEffect(() => {
+    if (onDisableOrgSwitch) {
+      onDisableOrgSwitch(showImportForm || showExportForm);
+    }
+  }, [showImportForm, showExportForm, onDisableOrgSwitch]);
 
   useEffect(() => {
     loadBatches();
@@ -95,8 +102,12 @@ const Warehouse = ({ selectedContext }) => {
   };
 
   const allTickets = [...importTickets, ...exportTickets]
-    .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-  
+    .sort((a, b) => {
+      const dateA = new Date(a.created_date);
+      const dateB = new Date(b.created_date);
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
   const totalPages = Math.ceil(allTickets.length / itemsPerPage);
   const currentTickets = allTickets.slice(
     (currentPage - 1) * itemsPerPage,
@@ -118,7 +129,7 @@ const Warehouse = ({ selectedContext }) => {
           <div className="warehouse-header-left">
             <div className="warehouse-icon">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#0158A4"/>
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#0158A4" />
               </svg>
             </div>
             <div className="warehouse-info">
@@ -127,23 +138,23 @@ const Warehouse = ({ selectedContext }) => {
             </div>
           </div>
           <div className="warehouse-actions">
-            <button 
+            <button
               className="action-btn"
               onClick={handleImportClick}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 10l5 5 5-5M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {t('warehouse.import')}
             </button>
-            <button 
+            <button
               className="action-btn"
               onClick={handleExportClick}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 14l5-5 5 5M12 9v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M21 9V5a2 2 0 00-2-2H5a2 2 0 00-2 2v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 14l5-5 5 5M12 9v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M21 9V5a2 2 0 00-2-2H5a2 2 0 00-2 2v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {t('warehouse.export')}
             </button>
@@ -155,8 +166,8 @@ const Warehouse = ({ selectedContext }) => {
             <span className="search-icon">
               <SearchIcon color="#666" size={16} />
             </span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder={t('warehouse.searchPlaceholder')}
               className="search-input"
             />
@@ -166,9 +177,9 @@ const Warehouse = ({ selectedContext }) => {
               <FilterIcon size={14} color="#666" />
               {t('warehouse.filter')}
             </button>
-            <button className="sort-btn">
+            <button className="sort-btn" onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}>
               <SortIcon size={14} color="#666" />
-              {t('warehouse.sort')}
+              {t('warehouse.date')}: ({sortOrder === 'newest' ? t('vendor.newest') : t('vendor.oldest')})
             </button>
           </div>
         </div>
@@ -181,22 +192,29 @@ const Warehouse = ({ selectedContext }) => {
           <>
             <div className="tickets-list">
               {currentTickets.map(ticket => (
-                <div key={ticket.id} className="ticket-card" onClick={() => navigate(`${ticket.id}`)} style={{ cursor: 'pointer' }}>
-                  <div className="ticket-header">
-                    <div>
-                      <h4>{ticket.ticket_code}</h4>
-                      <span className="ticket-type" style={{ fontSize: '12px', color: ticket.ticket_type ? '#10B981' : '#EF4444' }}>
-                        {ticket.ticket_type ? t('warehouse.import') : t('warehouse.export')}
-                      </span>
+                <div key={ticket.id} className="ticket-card" onClick={() => navigate(`${ticket.id}`)}>
+                  <div className="ticket-card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#0158A4" />
+                    </svg>
+                  </div>
+                  <div className="ticket-info">
+                    <div className="ticket-main-info">
+                      <h3 className="ticket-name" title={ticket.ticket_code}>{ticket.ticket_code}</h3>
+                      <div className="ticket-details">
+                        <span className="ticket-detail-item" style={{ color: ticket.ticket_type ? '#10B981' : '#EF4444' }}>
+                          {t('warehouse.type')}: {ticket.ticket_type ? t('warehouse.import1') : t('warehouse.export1')}
+                        </span>
+                        <span className="ticket-detail-item">
+                          {t('warehouse.date')}: {new Date(ticket.created_date).toLocaleDateString('en-GB')}
+                        </span>
+                      </div>
                     </div>
-                    <span className="ticket-date">
-                      {new Date(ticket.created_date).toLocaleDateString()}
-                    </span>
                   </div>
                 </div>
               ))}
             </div>
-            
+
             {totalPages > 1 && (
               <div className="cs_pagination">
                 <button
@@ -223,7 +241,7 @@ const Warehouse = ({ selectedContext }) => {
           <div className="warehouse-empty">
             <div className="empty-icon">
               <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#E5E7EB"/>
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#E5E7EB" />
               </svg>
             </div>
             <h3>{t('warehouse.noData')}</h3>

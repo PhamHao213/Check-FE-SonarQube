@@ -330,7 +330,8 @@
     "nameRequired": "Tên nhà cung cấp là bắt buộc",
     "invalidPhoneNumber": "Số điện thoại không đúng định dạng",
     "selectMethod": "Chọn phương thức tạo",
-    "createDesc": "Tạo một nhân xanh mới"
+    "createDesc": "Tạo một nhân xanh mới",
+    "greenBean": "Nhân xanh"
   },
   "greenBatch": {
     "title": "Lô nhân xanh",
@@ -3301,7 +3302,34 @@
     "alreadyCancelled": "Phiếu này đã được hủy",
     "cancelTicketTooltip": "Hủy phiếu nhập/xuất kho",
     "editTicketTooltip": "Chỉnh sửa thông tin phiếu",
-    "deleteTicketTooltip": "Xóa phiếu vĩnh viễn"
+    "deleteTicketTooltip": "Xóa phiếu vĩnh viễn",
+    "importReceipt": "Phiếu nhập kho",
+    "exportReceipt": "Phiếu xuất kho",
+    "information": "Thông tin",
+    "ticketCode": "Mã phiếu",
+    "date": "Ngày",
+    "type": "Loại phiếu",
+    "details": "Chi tiết",
+    "quantity": "Số lượng",
+    "editTicket": "Chỉnh sửa phiếu",
+    "cancelTooltipText": "Hành động này sẽ hủy phiếu và không thể hoàn tác. Vui lòng kiểm tra kỹ trước khi tiếp tục.",
+    "confirmCancelTicket": "Xác nhận hủy phiếu",
+    "confirmDelete": "Xác nhận xóa",
+    "confirmDeleteMessage": "Bạn có chắc chắn muốn xóa phiếu {{code}} không? Hành động này không thể hoàn tác.",
+    "importDate": "Ngày nhập",
+    "batches": "Lô nhân xanh",
+    "addBatch": "Thêm nhân xanh",
+    "selectBatch": "Chọn lô nhân xanh",
+    "exportDate": "Ngày xuất",
+    "stock": "Tồn",
+    "sales": "Kinh doanh",
+    "rawMaterials": "Nguyên vật liệu",
+    "qualityControl": "Kiểm soát chất lượng",
+    "import1": "Phiếu nhập",
+    "export1": "Phiếu xuất",
+    "createImportSuccess": "Tạo phiếu nhập thành công",
+    "createError": "Tạo phiếu thất bại. Vui lòng thử lại.",
+    "createExportSuccess": "Tạo phiếu xuất thành công",
+    "searchBatch": "Tìm kiếm lô nhân xanh"
   }
-  
 }

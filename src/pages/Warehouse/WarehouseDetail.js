@@ -13,6 +13,7 @@ const WarehouseDetail = ({ selectedContext }) => {
   const [userPermissions, setUserPermissions] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCancelTooltip, setShowCancelTooltip] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [batches, setBatches] = useState([]);
   const [userRole, setUserRole] = useState(null);
 
@@ -39,11 +40,11 @@ const WarehouseDetail = ({ selectedContext }) => {
       console.log('🔍 Loading user role with context:', selectedContext);
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
       console.log('📦 Policy response:', policyResponse);
-      
+
       // Nếu là personal policy (organization_id = null) thì luôn là owner
       const isPersonal = policyResponse?.data?.organization_id === null;
       const role = isPersonal ? 'owner' : null; // Với org sẽ cần fetch role từ role_id
-      
+
       console.log('👤 Is personal:', isPersonal);
       console.log('👤 User role:', role);
       setUserRole(role);
@@ -57,7 +58,7 @@ const WarehouseDetail = ({ selectedContext }) => {
     const isAdmin = userRole === 'admin';
     const hasExplicitPermission = userPermissions.includes(permission);
     const result = isOwner || isAdmin || hasExplicitPermission;
-    
+
     console.log('🔐 Permission check:', {
       permission,
       userRole,
@@ -66,7 +67,7 @@ const WarehouseDetail = ({ selectedContext }) => {
       hasExplicitPermission,
       result
     });
-    
+
     return result;
   };
 
@@ -98,8 +99,6 @@ const WarehouseDetail = ({ selectedContext }) => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(t('warehouse.confirmDelete'))) return;
-
     try {
       if (ticket.ticket_type) {
         await inventoryApi.deleteImportTicket(ticket_id);
@@ -180,7 +179,7 @@ const WarehouseDetail = ({ selectedContext }) => {
       <div className="warehouse-detail-wrapper">
         <button className="warehouse-detail-back-button" onClick={() => navigate(-1)}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           {t('common.back')}
         </button>
@@ -189,7 +188,7 @@ const WarehouseDetail = ({ selectedContext }) => {
           <div className="warehouse-detail-title-section">
             <div className="warehouse-detail-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#0158A4"/>
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="#0158A4" />
               </svg>
             </div>
             <div>
@@ -200,24 +199,24 @@ const WarehouseDetail = ({ selectedContext }) => {
             </div>
           </div>
           <div className="warehouse-detail-actions">
-            <button 
-              className="action-btn" 
+            <button
+              className="action-btn"
               onClick={() => setShowEditModal(true)}
               style={{ background: '#0158A4' }}
               title={t('warehouse.editTicketTooltip')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {t('common.edit')}
             </button>
             <div style={{ position: 'relative' }}>
-              <button 
-                className="action-btn" 
+              <button
+                className="action-btn"
                 onClick={handleCancelClick}
                 disabled={!!(ticket?.is_cancel || ticket?.is_cancelled)}
-                style={{ 
+                style={{
                   background: (ticket?.is_cancel || ticket?.is_cancelled) ? '#9CA3AF' : '#F59E0B',
                   cursor: (ticket?.is_cancel || ticket?.is_cancelled) ? 'not-allowed' : 'pointer',
                   opacity: (ticket?.is_cancel || ticket?.is_cancelled) ? 0.6 : 1
@@ -225,7 +224,7 @@ const WarehouseDetail = ({ selectedContext }) => {
                 title={(ticket?.is_cancel || ticket?.is_cancelled) ? t('warehouse.alreadyCancelled') : t('warehouse.cancelTicketTooltip')}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 {t('warehouse.cancelTicket')}
               </button>
@@ -267,19 +266,17 @@ const WarehouseDetail = ({ selectedContext }) => {
                 </div>
               )}
             </div>
-            {hasPermission('delete_inventory_ticket') && (
-              <button 
-                className="action-btn" 
-                onClick={handleDelete}
-                style={{ background: '#EF4444' }}
-                title={t('warehouse.deleteTicketTooltip')}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
-                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                {t('common.delete')}
-              </button>
-            )}
+            <button
+              className="action-btn"
+              onClick={() => setShowDeleteConfirm(true)}
+              style={{ background: '#dc2626' }}
+              title={t('warehouse.deleteTicketTooltip')}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
+                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {t('common.delete')}
+            </button>
           </div>
         </div>
 
@@ -305,7 +302,7 @@ const WarehouseDetail = ({ selectedContext }) => {
               </div>
               <div className="warehouse-info-item">
                 <p className="warehouse-info-label">{t('warehouse.status')}</p>
-                <p className="warehouse-info-value" style={{ 
+                <p className="warehouse-info-value" style={{
                   color: (ticket.is_cancel || ticket.is_cancelled) ? '#EF4444' : '#10B981'
                 }}>
                   {(ticket.is_cancel || ticket.is_cancelled) ? t('warehouse.cancelled') : t('warehouse.active')}
@@ -391,6 +388,60 @@ const WarehouseDetail = ({ selectedContext }) => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0' }}>{t('warehouse.confirmDelete')}</h3>
+            <p style={{ margin: '0 0 24px 0' }}>
+              {t('warehouse.confirmDeleteMessage', { code: ticket.ticket_code })}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  background: 'white',
+                  cursor: 'pointer'
+                }}
+              >{t('common.cancel')}</button>
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  handleDelete();
+                }}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  background: '#dc2626',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}
+              >{t('common.delete')}</button>
+            </div>
           </div>
         </div>
       )}

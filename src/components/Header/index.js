@@ -7,7 +7,7 @@ import ProfileDropdown from '../ProfileDropdown';
 import LanguageToggle from '../LanguageToggle';
 import { useUser } from '../../hooks/useUser';
 
-const Header = ({ selectedContext }) => {
+const Header = ({ selectedContext, disableOrgSwitch }) => {
   const user = useUser();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const Header = ({ selectedContext }) => {
       </div>
       <div className="header-right">
         <LanguageToggle />
-        <ProfileDropdown selectedContext={selectedContext} />
+        <ProfileDropdown selectedContext={selectedContext} disableOrgSwitch={disableOrgSwitch} />
       </div>
     </div>
   );

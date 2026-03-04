@@ -64,6 +64,12 @@
   background-color: rgba(121, 121, 121, 0.05);
 }
 
+.dropdown-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .dropdown-item:first-child {
   border-radius: 8px 8px 0 0;
 }

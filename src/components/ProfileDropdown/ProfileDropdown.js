@@ -8,7 +8,7 @@ import ChangePasswordModal from '../ChangePasswordModal';
 import { API_BASE_URL } from '../../api/config';
 import { useUser } from '../../hooks/useUser';
 
-const ProfileDropdown = ({ selectedContext }) => {
+const ProfileDropdown = ({ selectedContext, disableOrgSwitch }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useUser();
@@ -93,7 +93,7 @@ const ProfileDropdown = ({ selectedContext }) => {
               <FaUser size={14} />
               <span>{t('profile.title')}</span>
             </button>
-            <button className="dropdown-item" onClick={handleOrganizationClick}>
+            <button className="dropdown-item" onClick={handleOrganizationClick} disabled={disableOrgSwitch}>
               <FaBuilding size={14} />
               <span>{t('organization.title')}</span>
             </button>

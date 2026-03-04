@@ -14,6 +14,16 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
     batches: []
   });
   const [batches, setBatches] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentBatchIndex, setCurrentBatchIndex] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBatchIds, setSelectedBatchIds] = useState([]);
+
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  };
 
   useEffect(() => {
     loadBatches();
@@ -45,11 +55,48 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
   const handleBatchChange = (index, field, value) => {
     setFormData(prev => ({
       ...prev,
-      batches: prev.batches.map((batch, i) => 
+      batches: prev.batches.map((batch, i) =>
         i === index ? { ...batch, [field]: value } : batch
       )
     }));
   };
+
+  const openBatchModal = (index) => {
+    setCurrentBatchIndex(index);
+    setSearchTerm('');
+    setShowModal(true);
+  };
+
+  const openMultiBatchModal = () => {
+    setCurrentBatchIndex(null);
+    setSearchTerm('');
+    setSelectedBatchIds([]);
+    setShowModal(true);
+  };
+
+  const selectBatch = (batchId) => {
+    handleBatchChange(currentBatchIndex, 'batch_id', batchId);
+    setShowModal(false);
+  };
+
+  const toggleBatchSelection = (batchId) => {
+    setSelectedBatchIds(prev => 
+      prev.includes(batchId) ? prev.filter(id => id !== batchId) : [...prev, batchId]
+    );
+  };
+
+  const addSelectedBatches = () => {
+    const newBatches = selectedBatchIds.map(id => ({ batch_id: id, quantity: '', reason: 'sales' }));
+    setFormData(prev => ({ ...prev, batches: [...prev.batches, ...newBatches] }));
+    setShowModal(false);
+  };
+
+  const filteredBatches = batches.filter(b => 
+    b.weight > 0 && (
+      b.batch_code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.green_bean_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   const getBatchStock = (batchId) => {
     const batch = batches.find(b => b.uuid === batchId);
@@ -86,37 +133,36 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
           <div className="form-section">
             <div className="form-group">
               <label>{t('warehouse.exportDate')}</label>
-              <input
-                type="date"
-                value={formData.export_date}
-                onChange={(e) => setFormData({ ...formData, export_date: e.target.value })}
-                required
-              />
+              <div className="date-input-wrapper">
+                <input
+                  type="date"
+                  value={formData.export_date}
+                  onChange={(e) => setFormData({ ...formData, export_date: e.target.value })}
+                  required
+                />
+                <span className="date-display">{formatDateDisplay(formData.export_date)}</span>
+              </div>
             </div>
           </div>
 
           <div className="form-section">
             <div className="section-header">
               <label>{t('warehouse.batches')}</label>
-              <button type="button" className="add-button" onClick={handleAddBatch}>
-                + {t('warehouse.addBatch')}
-              </button>
+              <div className="header-buttons">
+                <button type="button" className="add-button-single" onClick={handleAddBatch}>
+                  + {t('warehouse.addBatch')}
+                </button>
+              </div>
             </div>
 
             {formData.batches.map((batch, index) => (
               <div key={index} className="batch-row">
-                <select
-                  value={batch.batch_id}
-                  onChange={(e) => handleBatchChange(index, 'batch_id', e.target.value)}
-                  required
-                >
-                  <option value="">{t('warehouse.selectBatch')}</option>
-                  {batches.filter(b => b.weight > 0).map(b => (
-                    <option key={b.uuid} value={b.uuid}>
-                      {b.batch_code} - {b.green_bean_name} (Tồn: {b.weight}kg)
-                    </option>
-                  ))}
-                </select>
+                <div className="batch-select" onClick={() => openBatchModal(index)}>
+                  {batch.batch_id ? 
+                    batches.find(b => b.uuid === batch.batch_id)?.green_bean_name + 
+                    ' (' + t('warehouse.stock') + ': ' + batches.find(b => b.uuid === batch.batch_id)?.weight + 'kg)'
+                    : t('warehouse.selectBatch')}
+                </div>
 
                 <input
                   type="number"
@@ -155,6 +201,54 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
           </div>
         </form>
       </div>
+
+      {showModal && (
+        <div className="batch-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="batch-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{t('warehouse.selectBatch')}</h3>
+              <button onClick={() => setShowModal(false)}>×</button>
+            </div>
+            <input
+              type="text"
+              className="batch-search"
+              placeholder={t('warehouse.searchBatch')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+            <div className="batch-list">
+              {filteredBatches.map(b => (
+                <div 
+                  key={b.uuid} 
+                  className={`batch-item ${currentBatchIndex === null && selectedBatchIds.includes(b.uuid) ? 'selected' : ''}`}
+                  onClick={() => currentBatchIndex !== null ? selectBatch(b.uuid) : toggleBatchSelection(b.uuid)}
+                >
+                  {currentBatchIndex === null && (
+                    <input 
+                      type="checkbox" 
+                      checked={selectedBatchIds.includes(b.uuid)}
+                      onChange={() => toggleBatchSelection(b.uuid)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  )}
+                  <div className="batch-info">
+                    <span className="batch-name">{b.green_bean_name}</span>
+                    <span className="batch-stock">{t('warehouse.stock')}: {b.weight}kg</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {currentBatchIndex === null && (
+              <div className="modal-footer">
+                <button className="confirm-button" onClick={addSelectedBatches} disabled={selectedBatchIds.length === 0}>
+                  {t('common.add')} ({selectedBatchIds.length})
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
