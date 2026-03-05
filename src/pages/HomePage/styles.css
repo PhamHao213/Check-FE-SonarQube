@@ -1,0 +1,495 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+/* Animation keyframes */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes gradientBG {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ripple {
+  to {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.homepage {
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Animated overlay */
+.homepage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(31, 66, 155, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%);
+  z-index: 0;
+  animation: gradientBG 8s ease infinite;
+}
+
+.homepage__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  position: relative;
+  z-index: 10;
+  animation: slideDown 0.8s ease forwards;
+}
+
+.homepage__logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.homepage__logo-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  animation: pulse 2s infinite;
+}
+
+.homepage__brand-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1F429B;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(45deg, #1F429B, #4A6FCF, #1F429B);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+}
+
+.homepage__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.homepage__language-switcher {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.homepage__language-switcher:hover {
+  transform: scale(1.1);
+  color: #1F429B;
+}
+
+.homepage__language-switcher::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #1F429B;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.homepage__language-switcher:hover::after {
+  transform: scaleX(1);
+}
+
+.homepage__start-btn {
+  background: #1F429B;
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.homepage__start-btn:hover {
+  background: #1F429B;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(31, 66, 155, 0.4);
+}
+
+.homepage__start-btn:active {
+  transform: translateY(0);
+}
+
+.homepage__start-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.homepage__start-btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+.homepage__main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.homepage__hero-logo {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 40px;
+  animation: zoomIn 0.8s ease forwards, float 3s ease-in-out infinite 0.8s;
+}
+
+.homepage__hero-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  transition: filter 0.3s ease;
+}
+
+.homepage__hero-logo-image:hover {
+  filter: drop-shadow(0 8px 12px rgba(31, 66, 155, 0.3));
+}
+
+.homepage__hero-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 30px 0;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif;
+  animation: fadeInUp 0.8s ease 0.2s forwards;
+  opacity: 0;
+}
+
+.homepage__hero-description {
+  font-size: 20px;
+  color: #000000;
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 0 60px 0;
+  font-family: 'Montserrat', sans-serif;
+  animation: fadeInUp 0.8s ease 0.4s forwards;
+  opacity: 0;
+}
+
+.homepage__footer {
+  font-size: 14px;
+  color: #000000;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  z-index: 10;
+  font-family: 'Montserrat', sans-serif;
+  animation: fadeInUp 0.8s ease 0.6s forwards;
+  opacity: 0;
+}
+
+.homepage__company-name {
+  color: #1F429B;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.homepage__company-name:hover {
+  text-shadow: 0 0 10px rgba(31, 66, 155, 0.5);
+  transform: scale(1.05);
+}
+
+/* Loading overlay animation */
+.homepage__loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeInUp 0.3s ease;
+}
+
+.homepage__loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1F429B;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Coffee beans decoration - thêm mà không ảnh hưởng layout chính */
+.homepage__decorative-beans {
+  position: absolute;
+  bottom: 100px;
+  right: 50px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.homepage__bean {
+  position: absolute;
+  width: 20px;
+  height: 30px;
+  background: #1F429B;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: rotate(45deg);
+  opacity: 0.2;
+  animation: floatBean 6s infinite;
+}
+
+.homepage__bean::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 10px;
+  background: #ffffff;
+  top: 10px;
+  left: 8px;
+  border-radius: 2px;
+  transform: rotate(90deg);
+}
+
+.homepage__bean--1 {
+  top: 0;
+  right: 0;
+  animation-delay: 0s;
+}
+
+.homepage__bean--2 {
+  top: 40px;
+  right: 30px;
+  width: 15px;
+  height: 25px;
+  animation-delay: 2s;
+}
+
+.homepage__bean--3 {
+  top: 70px;
+  right: -10px;
+  width: 12px;
+  height: 20px;
+  animation-delay: 4s;
+}
+
+@keyframes floatBean {
+  0%, 100% { 
+    transform: rotate(45deg) translateY(0); 
+  }
+  50% { 
+    transform: rotate(45deg) translateY(-15px); 
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .homepage__header {
+    padding: 15px 20px;
+    animation: slideDown 0.6s ease forwards;
+  }
+
+  .homepage__logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .homepage__brand-title {
+    font-size: 20px;
+  }
+
+  .homepage__language-switcher {
+    font-size: 14px;
+  }
+
+  .homepage__start-btn {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+
+  .homepage__main-content {
+    padding: 20px 15px;
+  }
+
+  .homepage__hero-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+  }
+
+  .homepage__hero-title {
+    font-size: 22px;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+    animation: fadeInUp 0.6s ease 0.2s forwards;
+  }
+
+  .homepage__hero-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 30px 0;
+    padding: 0 10px;
+    animation: fadeInUp 0.6s ease 0.4s forwards;
+  }
+
+  .homepage__decorative-beans {
+    display: none;
+  }
+
+  .homepage__footer {
+    font-size: 12px;
+    padding: 15px;
+    animation: fadeInUp 0.6s ease 0.6s forwards;
+  }
+}
+
+/* Hiệu ứng scrollbar tùy chỉnh */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F429B;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4A6FCF;
+}
+
+/* Animation cho phần tử khi xuất hiện */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Thêm hiệu ứng cho các phần tử khi hover */
+.homepage__logo-container:hover .homepage__logo-icon {
+  animation: pulse 1s infinite;
+}
+
+.homepage__logo-container:hover .homepage__brand-title {
+  animation: shine 1.5s linear infinite;
+}

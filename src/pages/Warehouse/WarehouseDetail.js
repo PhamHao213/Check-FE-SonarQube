@@ -2,12 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { inventoryApi } from '../../api/inventoryApi';
+import { API_BASE_URL } from '../../api/config';
 import './Warehouse.css';
 
 const WarehouseDetail = ({ selectedContext }) => {
   const { t } = useTranslation();
   const { ticket_id } = useParams();
   const navigate = useNavigate();
+
+  // Helper function to translate backend values
+  const translateReason = (reason) => {
+    const reasonMap = {
+      'sales': t('warehouse.sales'),
+      'raw_materials': t('warehouse.rawMaterials'),
+      'quality_control': t('warehouse.qualityControl')
+    };
+    return reasonMap[reason] || reason;
+  };
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userPermissions, setUserPermissions] = useState([]);
@@ -16,13 +27,16 @@ const WarehouseDetail = ({ selectedContext }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [batches, setBatches] = useState([]);
   const [userRole, setUserRole] = useState(null);
+  const [creatorName, setCreatorName] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     loadTicketDetail();
     loadUserPermissions();
     loadBatches();
     loadUserRole();
-  }, [ticket_id]);
+  }, [ticket_id, selectedContext]);
 
   const loadUserPermissions = () => {
     try {
@@ -77,16 +91,44 @@ const WarehouseDetail = ({ selectedContext }) => {
     try {
       setLoading(true);
       const response = await inventoryApi.getImportTicketById(ticket_id);
+      let ticketData;
       if (!response.data) {
         const exportResponse = await inventoryApi.getExportTicketById(ticket_id);
-        setTicket(exportResponse.data);
+        ticketData = exportResponse.data;
       } else {
-        setTicket(response.data);
+        ticketData = response.data;
       }
+      console.log('✅ Ticket data:', ticketData);
+      setTicket(ticketData);
+      
+      // Load creator name - use current user since they created it
+      await loadCurrentUserAsCreator();
     } catch (error) {
       console.error('Error loading ticket:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCurrentUserAsCreator = async () => {
+    try {
+      const { userApi } = await import('../../api/userApi');
+      const response = await userApi.getCurrentUser();
+      console.log('✅ Current user response:', response);
+      const user = response.data || response;
+      let name = '-';
+      if (user.user_firstname && user.user_lastname) {
+        name = `${user.user_firstname} ${user.user_lastname}`;
+      } else if (user.user_name) {
+        name = user.user_name;
+      } else if (user.username) {
+        name = user.username;
+      }
+      console.log('✅ Creator name:', name);
+      setCreatorName(name);
+    } catch (error) {
+      console.error('❌ Error loading creator:', error);
+      setCreatorName('-');
     }
   };
 
@@ -268,61 +310,99 @@ const WarehouseDetail = ({ selectedContext }) => {
         </div>
 
         <div className="warehouse-detail-content">
-          <div className="warehouse-info-section">
-            <h3>{t('warehouse.information')}</h3>
-            <div className="warehouse-info-grid">
-              <div className="warehouse-info-item">
-                <p className="warehouse-info-label">{t('warehouse.ticketCode')}</p>
-                <p className="warehouse-info-value">{ticket.ticket_code}</p>
+          {/* General Information Section */}
+          <div className="general-info-section">
+          <h3 className="section-title">
+            {t("warehouse.general_information")}
+          </h3>
+            <div className="info-grid">
+              <div className="info-field">
+              <label>{t('warehouse.code')}</label>
+                <input
+                  type="text"
+                  value={ticket.ticket_code}
+                  readOnly
+                  className="readonly-input"
+                />
               </div>
-              <div className="warehouse-info-item">
-                <p className="warehouse-info-label">{t('warehouse.date')}</p>
-                <p className="warehouse-info-value">
-                  {new Date(ticket.created_date).toLocaleDateString('vi-VN')}
-                </p>
+              <div className="info-field">
+              <label>
+                {t("warehouse.created_date")}
+              </label>
+                <input
+                  type="text"
+                  value={new Date(ticket.created_date).toLocaleDateString('vi-VN')}
+                  readOnly
+                  className="readonly-input"
+                />
               </div>
-              <div className="warehouse-info-item">
-                <p className="warehouse-info-label">{t('warehouse.type')}</p>
-                <p className="warehouse-info-value">
-                  {ticket.ticket_type ? t('warehouse.import') : t('warehouse.export')}
-                </p>
-              </div>
-              <div className="warehouse-info-item">
-                <p className="warehouse-info-label">{t('warehouse.status')}</p>
-                <p className="warehouse-info-value" style={{
-                  color: (ticket.is_cancel || ticket.is_cancelled) ? '#EF4444' : '#10B981'
-                }}>
-                  {(ticket.is_cancel || ticket.is_cancelled) ? t('warehouse.cancelled') : t('warehouse.active')}
-                </p>
+              <div className="info-field">
+              <label>{t("warehouse.created_by")}</label>
+                <input
+                  type="text"
+                  value={creatorName}
+                  readOnly
+                  className="readonly-input"
+                />
               </div>
             </div>
           </div>
 
-          <div className="warehouse-info-section">
-            <h3>{t('warehouse.details')}</h3>
-            <table className="warehouse-details-table">
+          {/* Detail Information Section */}
+          <div className="detail-info-section">
+          <h3 className="section-title">
+            {t("warehouse.detail_information")}
+          </h3>
+          </div>
+          <div className="detail-table">
+            <table>
               <thead>
                 <tr>
                   <th>{t('greenBeans.greenBean')}</th>
-                  <th style={{ textAlign: 'right' }}>{t('warehouse.quantity')}</th>
+                  <th>{t('warehouse.quantity')}</th>
                   {ticket.details?.[0]?.reason && (
                     <th>{t('warehouse.reason')}</th>
                   )}
                 </tr>
               </thead>
               <tbody>
-                {ticket.details?.map((detail, idx) => (
-                  <tr key={idx}>
-                    <td>{detail.green_bean_name || '-'}</td>
-                    <td style={{ textAlign: 'right' }}>{detail.quantity} kg</td>
-                    {detail.reason && (
-                      <td>{detail.reason}</td>
-                    )}
-                  </tr>
-                ))}
+                {ticket.details
+                  ?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((detail, idx) => (
+                    <tr key={idx}>
+                      <td>{detail.green_bean_name || '-'}</td>
+                      <td>{detail.quantity} kg</td>
+                      {detail.reason && (
+                        <td>{translateReason(detail.reason)}</td>
+                      )}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
+          
+          {/* Pagination */}
+          {ticket.details && ticket.details.length > itemsPerPage && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                Trước
+              </button>
+              <span className="pagination-info">
+                Trang {currentPage} / {Math.ceil(ticket.details.length / itemsPerPage)}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(ticket.details.length / itemsPerPage), prev + 1))}
+                disabled={currentPage === Math.ceil(ticket.details.length / itemsPerPage)}
+                className="pagination-btn"
+              >
+                Tiếp
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

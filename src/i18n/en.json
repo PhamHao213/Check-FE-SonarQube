@@ -3338,6 +3338,16 @@
     "varietyTypePlaceholder": "Variety (e.g., Typica)",
     "selectProcessingMethodRequired": "Select Processing Method",
     "altitudeRequired": "Altitude (m)",
-    "cropYearRequired": "Crop Year"
-  }
+    "cropYearRequired": "Crop Year",
+    "code": "Code",
+    "created_date": "Created Date",
+    "created_by": "Creator",
+    "general_information": "General Information",
+    "detail_information": "Detailed Information"
+  } ,
+  "home page": {
+    "coffee cupping management platform directly on the Website": "Coffee Cupping Management Platform Directly on the Website",
+    "optimized for mobile devices, allowing you to score cups right at the tasting table. WeSlurp lets you record, store, and compare cupping results anywhere, from anyone, with just your phone.": "Optimized for mobile devices, allowing you to score cups right at the tasting table. WeSlurp lets you record, store, and compare cupping results anywhere, from anyone, with just your phone.",
+    "start": "Start"
+    }
 }

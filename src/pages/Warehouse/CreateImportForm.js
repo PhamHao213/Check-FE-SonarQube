@@ -5,6 +5,7 @@ import { batchApi } from '../../api/batchApi';
 import { policyApi } from '../../api/policyApi';
 import { inventoryApi } from '../../api/inventoryApi';
 import { vendorApi } from '../../api/vendorApi';
+import { userApi } from '../../api/userApi';
 import { showToast } from '../../components/Toast/Toast';
 import { API_BASE_URL } from '../../api/config';
 import './CreateImportForm.css';
@@ -12,6 +13,7 @@ import './CreateImportForm.css';
 const CreateImportForm = ({ onBack, selectedContext }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
+    ticket_code: '',
     created_date: new Date().toISOString().split('T')[0],
     batches: []
   });
@@ -22,6 +24,7 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
   const [currentBatchIndex, setCurrentBatchIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBatchIds, setSelectedBatchIds] = useState([]);
+  const [nextTicketCode, setNextTicketCode] = useState('');
 
   // Green bean selection
   const [showGreenBeanModal, setShowGreenBeanModal] = useState(false);
@@ -72,6 +75,7 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     vendor_id: '',
     vendorData: null
   }]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const handleAddRow = () => {
     setRows([...rows, {
@@ -105,6 +109,8 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     loadGreenBeans();
     loadVendors();
     loadOrigins();
+    loadCurrentUser();
+    loadNextTicketCode();
   }, [selectedContext]);
 
   const loadBatches = async () => {
@@ -159,6 +165,44 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
       }
     } catch (error) {
       console.error('Error loading origins:', error);
+    }
+  };
+
+  const loadCurrentUser = async () => {
+    try {
+      const response = await userApi.getCurrentUser();
+      console.log('Current user response:', response);
+      setCurrentUser(response.data || response);
+    } catch (error) {
+      console.error('Error loading current user:', error);
+    }
+  };
+
+  const loadNextTicketCode = async () => {
+    try {
+      const policyResponse = await policyApi.getUserPolicy(selectedContext);
+      const policyId = policyResponse?.data?.uuid;
+      if (!policyId) return;
+      
+      const response = await inventoryApi.getAllImportTickets(policyId, selectedContext?.organizationId);
+      const tickets = response.data || [];
+      
+      if (tickets.length === 0) {
+        setNextTicketCode('PNK-0001');
+      } else {
+        const lastTicket = tickets[0];
+        const lastCode = lastTicket.ticket_code;
+        const match = lastCode.match(/PNK-(\d+)/);
+        if (match) {
+          const nextNum = parseInt(match[1]) + 1;
+          setNextTicketCode(`PNK-${nextNum.toString().padStart(4, '0')}`);
+        } else {
+          setNextTicketCode('PNK-0001');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading next ticket code:', error);
+      setNextTicketCode('PNK-0001');
     }
   };
 
@@ -421,75 +465,126 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
         </button>
 
         <div className="form-header">
-          <h2>{t('warehouse.detailInformation')}</h2>
+          <h2>Tạo phiếu nhập kho</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="detail-table">
-            <div className="table-header">
-              <div className="header-cell">
-                {t('warehouse.greenBeanName')}
+          {/* General Information Section */}
+          <div className="general-info-section">
+          <h3 className="section-title">
+            {t("warehouse.general_information")}
+          </h3>
+            <div className="info-grid">
+              <div className="info-field">
+              <label>{t('warehouse.code')}</label>
+                <input
+                  type="text"
+                  value={nextTicketCode}
+                  readOnly
+                  className="readonly-input"
+                  placeholder="Đang tải..."
+                />
               </div>
-
-              <div className="header-cell">
-                {t('warehouse.weight')}
-              </div>
-
-              <div className="header-cell">
-                {t('warehouse.supplier')}
-              </div>
-              <div className="header-cell"></div>
-            </div>
-            {rows.map((row, index) => (
-              <div key={index} className="table-row">
-                <div className="table-cell">
-                  <button
-                    type="button"
-                    className="select-batch-button"
-                    onClick={() => {
-                      setCurrentBatchIndex(index);
-                      setShowGreenBeanModal(true);
-                    }}
-                  >
-                    {row.selectedGreenBean?.green_bean_name || t('warehouse.selectGreenBean')}
-                  </button>
-                </div>
-                <div className="table-cell">
+              <div className="info-field">
+              <label>
+                {t("warehouse.created_date")} <span className="required">*</span>
+              </label>
+                <div className="date-input-wrapper">
                   <input
-                    type="number"
-                    value={row.weight}
-                    onChange={(e) => handleRowChange(index, 'weight', e.target.value)}
-                    className="input-field"
-                    placeholder=""
+                    type="date"
+                    value={formData.created_date}
+                    onChange={(e) => setFormData({ ...formData, created_date: e.target.value })}
+                    className="date-input"
+                    required
                   />
                 </div>
-                <div className="table-cell">
-                  <button
-                    type="button"
-                    className="select-vendor-btn"
-                    onClick={() => {
-                      setCurrentBatchIndex(index);
-                      setShowVendorModal(true);
-                    }}
-                  >
-                    {row.vendor_id
-                      ? vendors.find(v => v.uuid === row.vendor_id)?.name
-                      : row.vendorData?.name || ''}
-                  </button>
-                </div>
-                <div className="table-cell">
-                  {rows.length > 1 && (
-                    <button
-                      type="button"
-                      className="delete-row-btn"
-                      onClick={() => handleRemoveRow(index)}
-                    >
-                      <TrashIcon size={18} />
-                    </button>
-                  )}
-                </div>
               </div>
-            ))}
+              <div className="info-field">
+              <label>{t("warehouse.created_by")}</label>
+                <input
+                  type="text"
+                  value={currentUser ? (
+                    (currentUser.user_firstname && currentUser.user_lastname) 
+                      ? `${currentUser.user_firstname} ${currentUser.user_lastname}` 
+                      : (currentUser.user_name || currentUser.username || '')
+                  ) : ''}
+                  readOnly
+                  className="readonly-input"
+                  placeholder="Đang tải..."
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Detail Information Section */}
+          <div className="detail-info-section">
+          <h3 className="section-title">
+            {t("warehouse.detail_information")}
+          </h3>
+          </div>
+          <div className="detail-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>{t('warehouse.greenBeanName')}</th>
+                  <th>{t('warehouse.weight')}</th>
+                  <th>{t('warehouse.supplier')}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <td>
+                      <button
+                        type="button"
+                        className="select-batch-button"
+                        onClick={() => {
+                          setCurrentBatchIndex(index);
+                          setShowGreenBeanModal(true);
+                        }}
+                      >
+                        {row.selectedGreenBean?.green_bean_name || t('warehouse.selectGreenBean')}
+                      </button>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={row.weight}
+                        onChange={(e) => handleRowChange(index, 'weight', e.target.value)}
+                        className="input-field"
+                        placeholder=""
+                      />
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        className="select-vendor-btn"
+                        onClick={() => {
+                          setCurrentBatchIndex(index);
+                          setShowVendorModal(true);
+                        }}
+                      >
+                        {row.vendor_id
+                          ? vendors.find(v => v.uuid === row.vendor_id)?.name
+                          : row.vendorData?.name || ''}
+                      </button>
+                    </td>
+                    <td>
+                      {rows.length > 1 && (
+                        <button
+                          type="button"
+                          className="delete-row-btn"
+                          onClick={() => handleRemoveRow(index)}
+                        >
+                          <TrashIcon size={18} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <div className="form-actions">

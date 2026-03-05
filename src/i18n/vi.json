@@ -3324,9 +3324,9 @@
     "selectBatch": "Chọn lô nhân xanh",
     "exportDate": "Ngày xuất",
     "stock": "Tồn",
-    "sales": "Kinh doanh",
-    "rawMaterials": "Nguyên vật liệu",
-    "qualityControl": "Kiểm soát chất lượng",
+    "sales": "Bán hàng",
+    "rawMaterials": "Sản xuất thành phẩm",
+    "qualityControl": "Kiểm tra chất lượng",
     "import1": "Phiếu nhập",
     "export1": "Phiếu xuất",
     "createImportSuccess": "Tạo phiếu nhập thành công",
@@ -3350,6 +3350,16 @@
     "varietyTypePlaceholder": "Giống (ví dụ: Typica)",
     "selectProcessingMethodRequired": "Chọn phương pháp sơ chế",
     "altitudeRequired": "Độ cao (m)",
-    "cropYearRequired": "Năm vụ mùa"
-  }
+    "cropYearRequired": "Năm vụ mùa",
+    "code": "Mã phiếu",
+    "created_date": "Ngày tạo phiếu",
+    "created_by": "Người tạo phiếu",
+    "general_information": "Thông tin chung",
+    "detail_information": "Thông tin chi tiết"
+  },
+  "home page": {
+    "coffee cupping management platform directly on the Website": "Nền Tảng Quản Lý Cupping Cà Phê Trực Tiếp Trên Website",
+    "optimized for mobile devices, allowing you to score cups right at the tasting table. WeSlurp lets you record, store, and compare cupping results anywhere, from anyone, with just your phone.": "Giao diện tối ưu cho di động để bạn chấm điểm ngay tại bàn thử nếm. WeSlurp giúp bạn ghi chép, lưu trữ và so sánh kết quả cupping ở bất cứ đâu, của bất kỳ ai chỉ với một chiếc điện thoại.",
+    "start": "Bắt đầu"
+    }
 }

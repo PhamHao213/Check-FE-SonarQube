@@ -34,6 +34,7 @@ import { startTokenCheck, stopTokenCheck, checkTokenAndLogout } from './utils/au
 import { isAuthenticated, clearAuthData } from './utils/cookieAuth';
 import AuthModal from './components/AuthModal';
 import { showToast } from './components/Toast/Toast';
+import HomePage from './pages/HomePage';
 
 // Hàm băm ID tổ chức để bảo mật
 const hashOrgId = (orgId) => {
@@ -1288,6 +1289,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* QUAN TRỌNG: Sử dụng LoginWrapper thay vì Login trực tiếp */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginWrapper />} />
 
         <Route path="/register" element={<><Register onRegisterSuccess={() => window.location.href = '/verify-otp'} /><Toast /></>} />
@@ -1297,7 +1299,7 @@ function App() {
         {/* Route chia sẻ - không cần authentication */}
         <Route path="/shared/:sessionBatchId" element={<><SharedSession /><Toast /></>} />
 
-        <Route path="/" element={<Navigate to="/personal/gblist" replace />} />
+        {/* <Route path="/" element={<Navigate to="/personal/gblist" replace />} /> */}
 
         {/* Redirect routes cũ sang personal */}
         <Route path="/organization" element={<Navigate to="/personal/organization" replace />} />

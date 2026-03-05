@@ -49,79 +49,216 @@
   color: #212529;
 }
 
-.create-export-form .detail-table {
-  border: 1px solid #ddd;
+/* General Information Section */
+.create-export-form .general-info-section {
+  background-color: #FFFFFF;
+  border: 1px solid #dee2e6;
   border-radius: 8px;
-  overflow: hidden;
+  padding: 24px;
   margin-bottom: 24px;
 }
 
-.create-export-form .table-header {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 50px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #ddd;
-}
-
-.create-export-form .header-cell {
-  padding: 12px;
-  font-size: 14px;
+.create-export-form .section-title {
+  font-size: 16px;
   font-weight: 600;
   color: #212529;
-  border-right: 1px solid #ddd;
+  margin: 0 0 20px 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
-.create-export-form .header-cell:last-child {
-  border-right: none;
-}
-
-.create-export-form .required {
-  color: #ef4444;
-}
-
-.create-export-form .table-row {
+.create-export-form .info-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 50px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.create-export-form .table-cell {
-  padding: 12px;
-  border-right: 1px solid #ddd;
+.create-export-form .info-field {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-export-form .info-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+.create-export-form .info-field .required {
+  color: #dc3545;
+}
+
+.create-export-form .editable-input {
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  font-size: 14px;
+  color: #212529;
+}
+
+.create-export-form .editable-input:focus {
+  outline: none;
+  border-color: #1F429B;
+  box-shadow: 0 0 0 3px rgba(31, 66, 155, 0.1);
+}
+
+.create-export-form .readonly-input {
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.create-export-form .date-input-wrapper {
+  display: flex;
+  gap: 8px;
   align-items: center;
 }
 
-.create-export-form .table-cell:last-child {
-  border-right: none;
+.create-export-form .date-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #212529;
+}
+
+.create-export-form .date-input:focus {
+  outline: none;
+  border-color: #1F429B;
+  box-shadow: 0 0 0 3px rgba(31, 66, 155, 0.1);
+}
+
+.create-export-form .today-btn {
+  padding: 10px 16px;
+  background-color: #FFFFFF;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #495057;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.create-export-form .today-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.create-export-form .detail-info-section {
+  margin-bottom: 16px;
+}
+
+.create-export-form .detail-info-section .section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 16px 0;
+}
+
+@media (max-width: 768px) {
+  .create-export-form .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.create-export-form .detail-table {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 24px;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.create-export-form .detail-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.create-export-form .detail-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.create-export-form .detail-table th {
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-export-form .detail-table td {
+  padding: 10px 8px;
+  border: 1px solid #dee2e6;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-export-form .detail-table tr {
+  transition: background-color 0.2s;
+}
+
+.create-export-form .detail-table tr:hover {
+  background-color: #f8f9fa;
 }
 
 .create-export-form .select-batch-button {
-  padding: 8px 12px;
+  padding: 8px 6px;
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 11px;
   cursor: pointer;
   width: 100%;
-  text-align: left;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.create-export-form .select-batch-button:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
 }
 
 .create-export-form .input-field {
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 11px;
+  text-align: center;
 }
 
 .create-export-form .select-field {
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 11px;
   background-color: white;
   cursor: pointer;
+  text-align: center;
 }
 
 .create-export-form .delete-row-btn {
@@ -129,14 +266,20 @@
   color: #dc3545;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  margin: 0 auto;
 }
 
 .create-export-form .delete-row-btn:hover {
   color: #c82333;
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 .create-export-form .form-actions {
@@ -181,8 +324,37 @@
 }
 
 @media (max-width: 768px) {
+  .create-export-form .detail-table table {
+    table-layout: auto;
+  }
+  
+  .create-export-form .detail-table th,
+  .create-export-form .detail-table td {
+    padding: 8px 4px;
+    font-size: 0.9em;
+  }
+  
+  .create-export-form .select-batch-button,
+  .create-export-form .select-field {
+    white-space: normal;
+    min-height: 40px;
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+  
+  .create-export-form .input-field {
+    padding: 6px 2px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-export-form {
+    padding: 8px;
+  }
+  
   .create-export-form .form-wrapper {
-    padding: 24px;
+    padding: 12px;
   }
 }
 
