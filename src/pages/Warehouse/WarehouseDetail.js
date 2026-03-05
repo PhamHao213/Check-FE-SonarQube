@@ -27,7 +27,7 @@ const WarehouseDetail = ({ selectedContext }) => {
   const loadUserPermissions = () => {
     try {
       const permissions = JSON.parse(localStorage.getItem('user_permissions') || '[]');
-      console.log('📋 User permissions loaded:', permissions);
+
       setUserPermissions(permissions);
     } catch (error) {
       console.error('Error loading permissions:', error);
@@ -37,16 +37,15 @@ const WarehouseDetail = ({ selectedContext }) => {
   const loadUserRole = async () => {
     try {
       const { policyApi } = await import('../../api/policyApi');
-      console.log('🔍 Loading user role with context:', selectedContext);
+
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
-      console.log('📦 Policy response:', policyResponse);
+
 
       // Nếu là personal policy (organization_id = null) thì luôn là owner
       const isPersonal = policyResponse?.data?.organization_id === null;
       const role = isPersonal ? 'owner' : null; // Với org sẽ cần fetch role từ role_id
 
-      console.log('👤 Is personal:', isPersonal);
-      console.log('👤 User role:', role);
+
       setUserRole(role);
     } catch (error) {
       console.error('❌ Error loading user role:', error);
@@ -59,14 +58,7 @@ const WarehouseDetail = ({ selectedContext }) => {
     const hasExplicitPermission = userPermissions.includes(permission);
     const result = isOwner || isAdmin || hasExplicitPermission;
 
-    console.log('🔐 Permission check:', {
-      permission,
-      userRole,
-      isOwner,
-      isAdmin,
-      hasExplicitPermission,
-      result
-    });
+
 
     return result;
   };
@@ -129,21 +121,16 @@ const WarehouseDetail = ({ selectedContext }) => {
   };
 
   const handleUpdate = async (formData) => {
-    console.log('📝 Update ticket:', {
-      ticket_id,
-      ticket_type: ticket.ticket_type,
-      isImport: ticket.ticket_type,
-      formData
-    });
+
     try {
       if (ticket.ticket_type) {
-        console.log('➡️ Calling updateImportTicket');
+
         const response = await inventoryApi.updateImportTicket(ticket_id, formData);
-        console.log('✅ Import update response:', response);
+
       } else {
-        console.log('➡️ Calling updateExportTicket');
+
         const response = await inventoryApi.updateExportTicket(ticket_id, formData);
-        console.log('✅ Export update response:', response);
+
       }
       setShowEditModal(false);
       loadTicketDetail();
@@ -291,7 +278,7 @@ const WarehouseDetail = ({ selectedContext }) => {
               <div className="warehouse-info-item">
                 <p className="warehouse-info-label">{t('warehouse.date')}</p>
                 <p className="warehouse-info-value">
-                  {new Date(ticket.created_date).toLocaleDateString()}
+                  {new Date(ticket.created_date).toLocaleDateString('vi-VN')}
                 </p>
               </div>
               <div className="warehouse-info-item">

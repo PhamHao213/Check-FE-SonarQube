@@ -569,10 +569,12 @@ const CreateBatchForm = ({ onClose, onSuccess, selectedContext }) => {
               <input
                 type="number"
                 step="0.1"
+                min="0"
                 placeholder={t("auto.vd_125_338")}
                 value={newBatch.moisture}
                 onChange={(e) => {
                   const value = e.target.value;
+                  if (value && parseFloat(value) < 0) return;
                   if (validateDecimal(value, 'Độ ẩm', 1)) {
                     setNewBatch({ ...newBatch, moisture: value });
                   }
@@ -583,10 +585,15 @@ const CreateBatchForm = ({ onClose, onSuccess, selectedContext }) => {
             <div className="gbb_form-group half-width">
               <label>{t("auto.sn_339")}</label>
               <input
-                type="text"
+                type="number"
+                min="0"
                 placeholder={t("auto.vd_18_340")}
                 value={newBatch.size}
-                onChange={(e) => setNewBatch({ ...newBatch, size: e.target.value })} />
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value && parseFloat(value) < 0) return;
+                  setNewBatch({ ...newBatch, size: value });
+                }} />
 
             </div>
           </div>
@@ -597,11 +604,13 @@ const CreateBatchForm = ({ onClose, onSuccess, selectedContext }) => {
               <input
                 type="number"
                 step="0.1"
+                min="0"
                 placeholder={t("auto.vd_60_342")}
                 value={newBatch.weight}
                 required
                 onChange={(e) => {
                   const value = e.target.value;
+                  if (value && parseFloat(value) < 0) return;
                   if (validateDecimal(value, 'Khối lượng', 1)) {
                     setNewBatch({ ...newBatch, weight: value });
                   }

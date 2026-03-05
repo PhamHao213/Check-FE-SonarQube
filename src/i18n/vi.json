@@ -265,7 +265,9 @@
     "completed": "Đã hoàn thành",
     "notification": "Thông báo",
     "ok": "OK",
-    "skip": "Bỏ qua"
+    "skip": "Bỏ qua",
+    "saveInformation": "Lưu thông tin",
+    "addRow": "Thêm dòng"
   },
   "greenBeans": {
     "title": "Quản lý nhân xanh",
@@ -3330,6 +3332,24 @@
     "createImportSuccess": "Tạo phiếu nhập thành công",
     "createError": "Tạo phiếu thất bại. Vui lòng thử lại.",
     "createExportSuccess": "Tạo phiếu xuất thành công",
-    "searchBatch": "Tìm kiếm lô nhân xanh"
+    "searchBatch": "Tìm kiếm lô nhân xanh",
+    "reason": "Mục đích",
+    "greenBeanName": "Tên nhân xanh",
+    "weight": "Khối lượng",
+    "supplier": "Nhà cung cấp",
+    "detailInformation": "Thông tin chi tiết",
+    "selectGreenBean": "Chọn nhân xanh",
+    "createNewGreenBean": "Tạo nhân xanh mới",
+    "searchGreenBeanPlaceholder": "Tìm kiếm nhân xanh...",
+    "selectOrigin": "Chọn xuất xứ",
+    "greenBeanNameRequired": "Tên nhân xanh",
+    "selectSpeciesRequired": "Chọn chi",
+    "arabica": "Arabica",
+    "robusta": "Robusta",
+    "liberica": "Liberica",
+    "varietyTypePlaceholder": "Giống (ví dụ: Typica)",
+    "selectProcessingMethodRequired": "Chọn phương pháp sơ chế",
+    "altitudeRequired": "Độ cao (m)",
+    "cropYearRequired": "Năm vụ mùa"
   }
 }
