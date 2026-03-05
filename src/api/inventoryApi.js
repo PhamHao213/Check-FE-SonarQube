@@ -121,4 +121,19 @@ export const inventoryApi = {
     }
     return response.json();
   },
+
+  // Tạo phiếu nhập kho không cập nhật weight (dùng khi tạo batch mới)
+  createTicketWithoutWeight: async (data) => {
+    const response = await fetch(`${API_BASE_URL}/inventory-tickets/without-weight`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to create import ticket without weight');
+    }
+    return response.json();
+  },
 };

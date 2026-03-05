@@ -252,7 +252,9 @@
     "completed": "Completed",
     "notification": "Notification",
     "ok": "OK",
-    "skip": "Skip"
+    "skip": "Skip",
+    "saveInformation": "Save Information",
+    "addRow": "Add Row"
   },
   "greenBeans": {
     "title": "Green Bean Management",
@@ -3318,6 +3320,24 @@
     "searchBatch": "Search Batch",
     "cancelTicketTooltip": "Cancel this import/export receipt",
     "editTicketTooltip": "Edit receipt information",
-    "deleteTicketTooltip": "Delete this receipt permanently"
+    "deleteTicketTooltip": "Delete this receipt permanently",
+    "reason": "Reason",
+    "greenBeanName": "Green Bean Name",
+    "weight": "Weight",
+    "supplier": "Supplier",
+    "detailInformation": "Detailed Information",
+    "selectGreenBean": "Select Green Bean",
+    "createNewGreenBean": "Create New Green Bean",
+    "searchGreenBeanPlaceholder": "Search Green Beans...",
+    "selectOrigin": "Select Origin",
+    "greenBeanNameRequired": "Green Bean Name",
+    "selectSpeciesRequired": "Select Species",
+    "arabica": "Arabica",
+    "robusta": "Robusta",
+    "liberica": "Liberica",
+    "varietyTypePlaceholder": "Variety (e.g., Typica)",
+    "selectProcessingMethodRequired": "Select Processing Method",
+    "altitudeRequired": "Altitude (m)",
+    "cropYearRequired": "Crop Year"
   }
 }
