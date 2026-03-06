@@ -3355,7 +3355,17 @@
     "created_date": "Ngày tạo phiếu",
     "created_by": "Người tạo phiếu",
     "general_information": "Thông tin chung",
-    "detail_information": "Thông tin chi tiết"
+    "detail_information": "Thông tin chi tiết",
+     "greenBeanBatch": "Lô nhân xanh",
+     "selectGreenBeanBatch": "Chọn lô nhân xanh",
+     "createWarehouseExport": "Tạo phiếu xuất kho",
+     "createImportNote": "Tạo phiếu nhập kho",
+     "createBatch": "Tạo lô nhân xanh mới",
+     "searchBatches": "Tìm kiếm lô nhân xanh...",
+     "greenBeanname": "Tên nhân xanh",
+   "createdDate": "Ngày tạo",
+   "suppliername": "Nhà cung cấp",
+   "receiptCode": "Mã phiếu"
   },
   "home page": {
     "coffee cupping management platform directly on the Website": "Nền Tảng Quản Lý Cupping Cà Phê Trực Tiếp Trên Website",

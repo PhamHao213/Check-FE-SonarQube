@@ -4,7 +4,6 @@ import { ArrowLeftIcon, TrashIcon } from '../../components/Icons';
 import { batchApi } from '../../api/batchApi';
 import { policyApi } from '../../api/policyApi';
 import { inventoryApi } from '../../api/inventoryApi';
-import { vendorApi } from '../../api/vendorApi';
 import { userApi } from '../../api/userApi';
 import { showToast } from '../../components/Toast/Toast';
 import { API_BASE_URL } from '../../api/config';
@@ -17,21 +16,25 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     created_date: new Date().toISOString().split('T')[0],
     batches: []
   });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pendingTickets, setPendingTickets] = useState([]);
   const [batches, setBatches] = useState([]);
+  const [nextTicketCode, setNextTicketCode] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [currentBatchIndex, setCurrentBatchIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBatchIds, setSelectedBatchIds] = useState([]);
-  const [nextTicketCode, setNextTicketCode] = useState('');
 
-  // Green bean selection
-  const [showGreenBeanModal, setShowGreenBeanModal] = useState(false);
-  const [selectedGreenBean, setSelectedGreenBean] = useState(null);
+  // Create new batch states
+  const [showCreateBatchModal, setShowCreateBatchModal] = useState(false);
   const [greenBeans, setGreenBeans] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [origins, setOrigins] = useState([]);
+  const [newBatchData, setNewBatchData] = useState({
+    green_bean_id: '',
+    vendor_id: ''
+  });
+  
+  // Green bean creation states
   const [showCreateGreenBeanModal, setShowCreateGreenBeanModal] = useState(false);
-  const [greenBeanSearchTerm, setGreenBeanSearchTerm] = useState('');
+  const [showOriginModal, setShowOriginModal] = useState(false);
   const [greenBeanData, setGreenBeanData] = useState({
     origin_id: '',
     green_bean_name: '',
@@ -42,23 +45,8 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     altitude: '',
     crop_year: ''
   });
-  const [origins, setOrigins] = useState([]);
-  const [showOriginModal, setShowOriginModal] = useState(false);
-
-  // Batch form data
-  const [batchFormData, setBatchFormData] = useState({
-    moisture: '',
-    size: '',
-    weight: '',
-    density: '',
-    vendor_id: '',
-    is_sample: false,
-    batch_date: new Date().toISOString().split('T')[0],
-    image: null
-  });
-
-  // Vendor
-  const [vendors, setVendors] = useState([]);
+  
+  // Vendor creation states
   const [showVendorModal, setShowVendorModal] = useState(false);
   const [showCreateVendorModal, setShowCreateVendorModal] = useState(false);
   const [vendorData, setVendorData] = useState({
@@ -70,19 +58,15 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
   });
 
   const [rows, setRows] = useState([{
-    selectedGreenBean: null,
-    weight: '',
-    vendor_id: '',
-    vendorData: null
+    selectedBatch: null,
+    quantity: ''
   }]);
   const [currentUser, setCurrentUser] = useState(null);
 
   const handleAddRow = () => {
     setRows([...rows, {
-      selectedGreenBean: null,
-      weight: '',
-      vendor_id: '',
-      vendorData: null
+      selectedBatch: null,
+      quantity: ''
     }]);
   };
 
@@ -144,8 +128,13 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
       const policyId = policyResponse?.data?.uuid;
       if (!policyId) return;
-      const response = await vendorApi.getAll(policyId);
-      setVendors(response.data || []);
+      const response = await fetch(`${API_BASE_URL}/vendors?policy_id=${policyId}`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setVendors(data.data || []);
+      }
     } catch (error) {
       console.error('Error loading vendors:', error);
     }
@@ -206,186 +195,44 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     }
   };
 
-  const handleAddBatch = () => {
-    setFormData(prev => ({
-      ...prev,
-      batches: [...prev.batches, { batch_id: '', quantity: '' }]
-    }));
-  };
-
-  const handleRemoveBatch = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      batches: prev.batches.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleBatchChange = (index, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      batches: prev.batches.map((batch, i) =>
-        i === index ? { ...batch, [field]: value } : batch
-      )
-    }));
-  };
-
-  const openBatchModal = (index) => {
-    setCurrentBatchIndex(index);
-    setSearchTerm('');
-    setShowModal(true);
-  };
-
-  const openMultiBatchModal = () => {
-    setCurrentBatchIndex(null);
-    setSearchTerm('');
-    setSelectedBatchIds([]);
-    setShowModal(true);
-  };
-
-  const selectBatch = (batchId) => {
-    handleBatchChange(currentBatchIndex, 'batch_id', batchId);
-    setShowModal(false);
-  };
-
-  const toggleBatchSelection = (batchId) => {
-    setSelectedBatchIds(prev =>
-      prev.includes(batchId) ? prev.filter(id => id !== batchId) : [...prev, batchId]
-    );
-  };
-
-  const addSelectedBatches = () => {
-    const newBatches = selectedBatchIds.map(id => ({ batch_id: id, quantity: '' }));
-    setFormData(prev => ({ ...prev, batches: [...prev.batches, ...newBatches] }));
-    setShowModal(false);
-  };
-
   const filteredBatches = batches.filter(b =>
     b.batch_code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.green_bean_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validate all rows
-    for (let i = 0; i < rows.length; i++) {
-      if (!rows[i].selectedGreenBean) {
-        showToast(`Vui lòng chọn nhân xanh cho dòng ${i + 1}`, 'error');
-        return;
-      }
-      if (!rows[i].weight) {
-        showToast(`Vui lòng nhập khối lượng cho dòng ${i + 1}`, 'error');
-        return;
-      }
+  const handleCreateNewBatch = async () => {
+    if (!newBatchData.green_bean_id) {
+      showToast('Vui lòng chọn nhân xanh', 'error');
+      return;
     }
 
     try {
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
       const policyId = policyResponse?.data?.uuid;
 
-      const batchesForImport = [];
-
-      // Tạo tất cả các lô nhân xanh
-      for (const row of rows) {
-        const greenBeanId = row.selectedGreenBean.uuid;
-        const vendorId = row.vendor_id || null;
-
-        // Tạo lô nhân xanh
-        const batchPayload = {
-          green_bean_id: greenBeanId,
-          moisture: 0,
-          size: null,
-          weight: parseFloat(row.weight),
-          density: null,
-          vendor_id: vendorId,
-          is_sample: false,
-          policy_id: policyId
-        };
-
-        const batchResponse = await batchApi.createBatch(batchPayload, selectedContext);
-        const newBatchId = batchResponse.data?.uuid || batchResponse.data?.batch_id || batchResponse.data?.id || batchResponse.data?.batchId;
-
-        if (!newBatchId) {
-          throw new Error('Không nhận được batch_id từ API');
-        }
-
-        batchesForImport.push({
-          batch_id: newBatchId,
-          quantity: parseFloat(row.weight)
-        });
-      }
-
-      // Tạo 1 phiếu nhập kho chứa tất cả các lô
-      const importPayload = {
-        created_date: formData.created_date,
-        batches: batchesForImport,
+      const batchPayload = {
+        green_bean_id: newBatchData.green_bean_id,
+        vendor_id: newBatchData.vendor_id || null,
+        weight: 0,
+        moisture: null,
+        size: null,
+        density: null,
+        is_sample: false,
         policy_id: policyId
       };
 
+      const response = await batchApi.createBatch(batchPayload, selectedContext);
+      const newBatch = response.data;
 
-
-      await inventoryApi.createImportTicket(importPayload);
-
-      showToast('Tạo phiếu nhập kho thành công', 'success');
-      if (onBack) onBack();
+      await loadBatches();
+      handleRowChange(currentBatchIndex, 'selectedBatch', newBatch);
+      setShowCreateBatchModal(false);
+      setNewBatchData({ green_bean_id: '', vendor_id: '' });
+      showToast('Tạo batch thành công', 'success');
     } catch (error) {
-      console.error('Error creating import ticket:', error);
-      showToast(error.message || 'Có lỗi xảy ra khi tạo phiếu nhập kho', 'error');
+      console.error('Error creating batch:', error);
+      showToast('Có lỗi xảy ra khi tạo batch', 'error');
     }
-  };
-
-  const handleNext = (e) => {
-    e.preventDefault();
-
-    if (!selectedGreenBean) {
-      showToast('Vui lòng chọn nhân xanh', 'error');
-      return;
-    }
-
-    // Lưu dữ liệu trang hiện tại
-    const currentTicketData = {
-      page: currentPage,
-      selectedGreenBean,
-      greenBeanData,
-      batchFormData,
-      vendorData,
-      created_date: formData.created_date
-    };
-
-    setPendingTickets(prev => [...prev, currentTicketData]);
-
-    // Reset form cho trang tiếp theo
-    setSelectedGreenBean(null);
-    setGreenBeanData({
-      origin_id: '',
-      green_bean_name: '',
-      green_bean_code: '',
-      variety: '',
-      variety_type: '',
-      processing: '',
-      altitude: '',
-      crop_year: ''
-    });
-    setBatchFormData({
-      moisture: '',
-      size: '',
-      weight: '',
-      density: '',
-      vendor_id: '',
-      is_sample: false,
-      batch_date: new Date().toISOString().split('T')[0],
-      image: null
-    });
-    setVendorData({
-      name: '',
-      address: '',
-      phone_number: '',
-      email: '',
-      contact_link: ''
-    });
-    setCurrentPage(prev => prev + 1);
-
-    showToast('Chuyển sang trang tiếp theo', 'info');
   };
 
   const handleCreateGreenBean = async () => {
@@ -415,13 +262,12 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
 
       if (!gbResponse.ok) throw new Error('Failed to create green bean');
       const gbResult = await gbResponse.json();
-      const newGreenBean = { ...greenBeanData, uuid: gbResult.data?.greenbeanId };
+      const newGreenBeanId = gbResult.data?.greenbeanId;
 
-      handleRowChange(currentBatchIndex, 'selectedGreenBean', newGreenBean);
+      setNewBatchData({ ...newBatchData, green_bean_id: newGreenBeanId });
       await loadGreenBeans();
       showToast('Tạo nhân xanh thành công', 'success');
       setShowCreateGreenBeanModal(false);
-      setShowGreenBeanModal(false);
     } catch (error) {
       console.error('Error creating green bean:', error);
       showToast('Có lỗi xảy ra khi tạo nhân xanh', 'error');
@@ -438,10 +284,19 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
       const policyId = policyResponse?.data?.uuid;
 
-      const vendorResponse = await vendorApi.create({ ...vendorData, policy_id: policyId });
-      const vendorId = vendorResponse.data?.uuid;
+      const vendorPayload = { ...vendorData, policy_id: policyId };
+      const vendorResponse = await fetch(`${API_BASE_URL}/vendors`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(vendorPayload)
+      });
 
-      handleRowChange(currentBatchIndex, 'vendor_id', vendorId);
+      if (!vendorResponse.ok) throw new Error('Failed to create vendor');
+      const vendorResult = await vendorResponse.json();
+      const newVendorId = vendorResult.data?.uuid;
+
+      setNewBatchData({ ...newBatchData, vendor_id: newVendorId });
       await loadVendors();
       showToast('Tạo nhà cung cấp thành công', 'success');
       setShowCreateVendorModal(false);
@@ -452,9 +307,45 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
     }
   };
 
-  const filteredGreenBeans = greenBeans.filter(gb =>
-    gb.green_bean_name?.toLowerCase().includes(greenBeanSearchTerm.toLowerCase())
-  );
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate all rows
+    for (let i = 0; i < rows.length; i++) {
+      if (!rows[i].selectedBatch) {
+        showToast(`Vui lòng chọn batch nhân xanh cho dòng ${i + 1}`, 'error');
+        return;
+      }
+      if (!rows[i].quantity) {
+        showToast(`Vui lòng nhập khối lượng cho dòng ${i + 1}`, 'error');
+        return;
+      }
+    }
+
+    try {
+      const policyResponse = await policyApi.getUserPolicy(selectedContext);
+      const policyId = policyResponse?.data?.uuid;
+
+      const batchesForImport = rows.map(row => ({
+        batch_id: row.selectedBatch.uuid,
+        quantity: parseFloat(row.quantity)
+      }));
+
+      const importPayload = {
+        created_date: formData.created_date,
+        batches: batchesForImport,
+        policy_id: policyId
+      };
+
+      await inventoryApi.createImportTicket(importPayload);
+
+      showToast('Tạo phiếu nhập kho thành công', 'success');
+      if (onBack) onBack();
+    } catch (error) {
+      console.error('Error creating import ticket:', error);
+      showToast(error.message || 'Có lỗi xảy ra khi tạo phiếu nhập kho', 'error');
+    }
+  };
 
   return (
     <div className="create-import-form">
@@ -465,7 +356,7 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
         </button>
 
         <div className="form-header">
-          <h2>Tạo phiếu nhập kho</h2>
+         <h2>{t("warehouse.createImportNote")}</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -526,9 +417,8 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
             <table>
               <thead>
                 <tr>
-                  <th>{t('warehouse.greenBeanName')}</th>
+                  <th>{t("warehouse.greenBeanBatch")}</th>
                   <th>{t('warehouse.weight')}</th>
-                  <th>{t('warehouse.supplier')}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -541,34 +431,20 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
                         className="select-batch-button"
                         onClick={() => {
                           setCurrentBatchIndex(index);
-                          setShowGreenBeanModal(true);
+                          setShowModal(true);
                         }}
                       >
-                        {row.selectedGreenBean?.green_bean_name || t('warehouse.selectGreenBean')}
+                        {row.selectedBatch ? `${row.selectedBatch.green_bean_name}` : t("warehouse.selectGreenBeanBatch")}
                       </button>
                     </td>
                     <td>
                       <input
                         type="number"
-                        value={row.weight}
-                        onChange={(e) => handleRowChange(index, 'weight', e.target.value)}
+                        value={row.quantity}
+                        onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
                         className="input-field"
                         placeholder=""
                       />
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        className="select-vendor-btn"
-                        onClick={() => {
-                          setCurrentBatchIndex(index);
-                          setShowVendorModal(true);
-                        }}
-                      >
-                        {row.vendor_id
-                          ? vendors.find(v => v.uuid === row.vendor_id)?.name
-                          : row.vendorData?.name || ''}
-                      </button>
                     </td>
                     <td>
                       {rows.length > 1 && (
@@ -606,81 +482,106 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
         <div className="batch-modal-overlay" onClick={() => setShowModal(false)}>
           <div className="batch-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{t('warehouse.selectBatch')}</h3>
+            <h3>{t("warehouse.selectGreenBeanBatch")}</h3>
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
-            <input
-              type="text"
-              className="batch-search"
-              placeholder={t('warehouse.searchBatch')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              autoFocus
-            />
-            <div className="batch-list">
-              {filteredBatches.map(b => (
-                <div
-                  key={b.uuid}
-                  className={`batch-item ${currentBatchIndex === null && selectedBatchIds.includes(b.uuid) ? 'selected' : ''}`}
-                  onClick={() => currentBatchIndex !== null ? selectBatch(b.uuid) : toggleBatchSelection(b.uuid)}
-                >
-                  {currentBatchIndex === null && (
-                    <input
-                      type="checkbox"
-                      checked={selectedBatchIds.includes(b.uuid)}
-                      onChange={() => toggleBatchSelection(b.uuid)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  )}
-                  <div className="batch-name">{b.green_bean_name}</div>
-                </div>
-              ))}
-            </div>
-            {currentBatchIndex === null && (
-              <div className="modal-footer">
-                <button className="confirm-button" onClick={addSelectedBatches} disabled={selectedBatchIds.length === 0}>
-                  {t('common.add')} ({selectedBatchIds.length})
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {showGreenBeanModal && (
-        <div className="batch-modal-overlay" onClick={() => setShowGreenBeanModal(false)}>
-          <div className="batch-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>{t('warehouse.selectGreenBean')}</h3>
-              <button onClick={() => setShowGreenBeanModal(false)}>×</button>
-            </div>
             <div className="modal-actions">
-              <button className="action-button" onClick={() => setShowCreateGreenBeanModal(true)}>
-                {t('warehouse.createNewGreenBean')}
+              <button className="action-button" onClick={() => setShowCreateBatchModal(true)}>
+               {t("warehouse.createBatch")}
               </button>
             </div>
             <input
               type="text"
               className="batch-search"
-              placeholder={t('warehouse.searchGreenBeanPlaceholder')}
-              value={greenBeanSearchTerm}
-              onChange={(e) => setGreenBeanSearchTerm(e.target.value)}
+              placeholder={t("warehouse.searchBatches")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               autoFocus
             />
             <div className="batch-list">
-              {filteredGreenBeans.map(gb => (
-                <div
-                  key={gb.uuid}
-                  className="batch-item"
-                  onClick={() => {
-                    handleRowChange(currentBatchIndex, 'selectedGreenBean', gb);
-                    setShowGreenBeanModal(false);
-                    setGreenBeanSearchTerm('');
-                  }}
+              <table className="batch-table">
+                <thead>
+                  <tr>
+                 <th>{t("warehouse.greenBeanname")}</th>
+                <th>{t("warehouse.createdDate")}</th>
+                <th>{t("warehouse.suppliername")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBatches.map(b => (
+                    <tr
+                      key={b.uuid}
+                      className="batch-row"
+                      onClick={() => {
+                        handleRowChange(currentBatchIndex, 'selectedBatch', b);
+                        setShowModal(false);
+                      }}
+                    >
+                      <td>{b.green_bean_name}</td>
+                      <td>{b.created_dt ? formatDateDisplay(b.created_dt.split('T')[0]) : 'N/A'}</td>
+                      <td>{b.vendor_name || 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCreateBatchModal && (
+        <div className="batch-modal-overlay" onClick={() => setShowCreateBatchModal(false)}>
+          <div className="batch-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+             <h3>{t("warehouse.createBatch")}</h3>
+              <button onClick={() => setShowCreateBatchModal(false)}>×</button>
+            </div>
+            <div className="modal-form">
+              <div style={{display: 'flex', gap: '8px'}}>
+                <select
+                  style={{flex: 1}}
+                  value={newBatchData.green_bean_id}
+                  onChange={(e) => setNewBatchData({ ...newBatchData, green_bean_id: e.target.value })}
                 >
-                  <div className="batch-name">{gb.green_bean_name}</div>
-                </div>
-              ))}
+                  <option value="">Chọn nhân xanh *</option>
+                  {greenBeans.map(gb => (
+                    <option key={gb.uuid} value={gb.uuid}>{gb.green_bean_name}</option>
+                  ))}
+                </select>
+                <button 
+                  type="button"
+                  className="confirm-button"
+                  onClick={() => setShowCreateGreenBeanModal(true)}
+                  style={{padding: '10px 16px', whiteSpace: 'nowrap'}}
+                >
+                  Tạo mới
+                </button>
+              </div>
+              <div style={{display: 'flex', gap: '8px'}}>
+                <select
+                  style={{flex: 1}}
+                  value={newBatchData.vendor_id}
+                  onChange={(e) => setNewBatchData({ ...newBatchData, vendor_id: e.target.value })}
+                >
+                  <option value="">Chọn nhà cung cấp (tùy chọn)</option>
+                  {vendors.map(v => (
+                    <option key={v.uuid} value={v.uuid}>{v.name}</option>
+                  ))}
+                </select>
+                <button 
+                  type="button"
+                  className="confirm-button"
+                  onClick={() => setShowVendorModal(true)}
+                  style={{padding: '10px 16px', whiteSpace: 'nowrap'}}
+                >
+                  Tạo mới
+                </button>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="confirm-button" onClick={handleCreateNewBatch}>
+                Tạo
+              </button>
             </div>
           </div>
         </div>
@@ -780,17 +681,18 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
                 Tạo nhà cung cấp mới
               </button>
             </div>
-            <div className="batch-list">
+            <div className="batch-list" style={{border: 'none', margin: '0 24px 24px'}}>
               {vendors.map(v => (
                 <div
                   key={v.uuid}
                   className="batch-item"
+                  style={{padding: '12px', border: '1px solid #e9ecef', borderRadius: '6px', marginBottom: '8px', cursor: 'pointer'}}
                   onClick={() => {
-                    handleRowChange(currentBatchIndex, 'vendor_id', v.uuid);
+                    setNewBatchData({ ...newBatchData, vendor_id: v.uuid });
                     setShowVendorModal(false);
                   }}
                 >
-                  <div className="batch-name">{v.name}</div>
+                  <div>{v.name}</div>
                 </div>
               ))}
             </div>
@@ -853,23 +755,26 @@ const CreateImportForm = ({ onBack, selectedContext }) => {
               <h3>Chọn xuất xứ</h3>
               <button onClick={() => setShowOriginModal(false)}>×</button>
             </div>
-            <div className="batch-list">
+            <div className="batch-list" style={{border: 'none', margin: '0 24px 24px'}}>
               {origins.map(origin => (
                 <div
                   key={origin.uuid}
                   className="batch-item"
+                  style={{padding: '12px', border: '1px solid #e9ecef', borderRadius: '6px', marginBottom: '8px', cursor: 'pointer'}}
                   onClick={() => {
                     setGreenBeanData({ ...greenBeanData, origin_id: origin.uuid });
                     setShowOriginModal(false);
                   }}
                 >
-                  <div className="batch-name">{origin.country_name} - {origin.region}</div>
+                  <div>{origin.country_name} - {origin.region}</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
       )}
+
+
     </div>
   );
 };

@@ -17,23 +17,22 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
     batches: []
   });
   const [batches, setBatches] = useState([]);
-  const [greenBeans, setGreenBeans] = useState([]);
-  const [showGreenBeanModal, setShowGreenBeanModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [currentBatchIndex, setCurrentBatchIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [nextTicketCode, setNextTicketCode] = useState('');
 
   const [rows, setRows] = useState([{
-    selectedGreenBean: null,
-    weight: '',
+    selectedBatch: null,
+    quantity: '',
     reason: 'sales'
   }]);
   const [currentUser, setCurrentUser] = useState(null);
 
   const handleAddRow = () => {
     setRows([...rows, {
-      selectedGreenBean: null,
-      weight: '',
+      selectedBatch: null,
+      quantity: '',
       reason: 'sales'
     }]);
   };
@@ -52,7 +51,6 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
 
   useEffect(() => {
     loadBatches();
-    loadGreenBeans();
     loadCurrentUser();
     loadNextTicketCode();
   }, [selectedContext]);
@@ -63,23 +61,6 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
       setBatches(response.data || []);
     } catch (error) {
       console.error('Error loading batches:', error);
-    }
-  };
-
-  const loadGreenBeans = async () => {
-    try {
-      const policyResponse = await policyApi.getUserPolicy(selectedContext);
-      const policyId = policyResponse?.data?.uuid;
-      if (!policyId) return;
-      const response = await fetch(`${API_BASE_URL}/greenbeans?policy_id=${policyId}`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setGreenBeans(data.data || []);
-      }
-    } catch (error) {
-      console.error('Error loading green beans:', error);
     }
   };
 
@@ -121,26 +102,26 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
     }
   };
 
-  const getAvailableStock = (greenBeanId) => {
-    const total = batches
-      .filter(b => b.green_bean_id === greenBeanId && b.weight > 0)
-      .reduce((sum, b) => sum + (parseFloat(b.weight) || 0), 0);
-    return total;
+  const formatDateDisplay = (dateStr) => {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
   };
 
-  const filteredGreenBeans = greenBeans.filter(gb =>
-    gb.green_bean_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBatches = batches.filter(b =>
+    b.batch_code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    b.green_bean_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     for (let i = 0; i < rows.length; i++) {
-      if (!rows[i].selectedGreenBean) {
-        showToast(`Vui lòng chọn nhân xanh cho dòng ${i + 1}`, 'error');
+      if (!rows[i].selectedBatch) {
+        showToast(`Vui lòng chọn batch nhân xanh cho dòng ${i + 1}`, 'error');
         return;
       }
-      if (!rows[i].weight) {
+      if (!rows[i].quantity) {
         showToast(`Vui lòng nhập khối lượng cho dòng ${i + 1}`, 'error');
         return;
       }
@@ -150,37 +131,11 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
       const policyResponse = await policyApi.getUserPolicy(selectedContext);
       const policyId = policyResponse?.data?.uuid;
 
-      const batchesForExport = [];
-
-      for (const row of rows) {
-        const greenBeanId = row.selectedGreenBean.uuid;
-        const requestedWeight = parseFloat(row.weight);
-        const availableStock = getAvailableStock(greenBeanId);
-
-        if (requestedWeight > availableStock) {
-          showToast(`Không đủ tồn kho cho ${row.selectedGreenBean.green_bean_name}. Tồn kho: ${availableStock}kg`, 'error');
-          return;
-        }
-
-        const greenBeanBatches = batches
-          .filter(b => b.green_bean_id === greenBeanId && b.weight > 0)
-          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
-        let remainingWeight = requestedWeight;
-
-        for (const batch of greenBeanBatches) {
-          if (remainingWeight <= 0) break;
-
-          const exportQuantity = Math.min(batch.weight, remainingWeight);
-          batchesForExport.push({
-            batch_id: batch.uuid,
-            quantity: exportQuantity,
-            reason: row.reason
-          });
-
-          remainingWeight -= exportQuantity;
-        }
-      }
+      const batchesForExport = rows.map(row => ({
+        batch_id: row.selectedBatch.uuid,
+        quantity: parseFloat(row.quantity),
+        reason: row.reason
+      }));
 
       const exportPayload = {
         export_date: formData.export_date,
@@ -206,7 +161,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
         </button>
 
         <div className="form-header">
-          <h2>Tạo phiếu xuất kho</h2>
+          <h2>{t("warehouse.createWarehouseExport")}</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -217,7 +172,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
           </h3>
             <div className="info-grid">
               <div className="info-field">
-                <label>Mã phiếu</label>
+                <label>{t("warehouse.receiptCode")}</label>
                 <input
                   type="text"
                   value={nextTicketCode}
@@ -268,9 +223,9 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
             <table>
               <thead>
                 <tr>
-                  <th>{t('warehouse.greenBeanName')}</th>
+                  <th>{t("warehouse.greenBeanBatch")}</th>
                   <th>{t('warehouse.weight')}</th>
-                  <th>{t('warehouse.supplier')}</th>
+                  <th>{t('warehouse.reason')}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -283,17 +238,17 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                         className="select-batch-button"
                         onClick={() => {
                           setCurrentBatchIndex(index);
-                          setShowGreenBeanModal(true);
+                          setShowModal(true);
                         }}
                       >
-                        {row.selectedGreenBean?.green_bean_name || t('warehouse.selectGreenBean')}
+                        {row.selectedBatch ? `${row.selectedBatch.green_bean_name}` : t("warehouse.selectGreenBeanBatch")}
                       </button>
                     </td>
                     <td>
                       <input
                         type="number"
-                        value={row.weight}
-                        onChange={(e) => handleRowChange(index, 'weight', e.target.value)}
+                        value={row.quantity}
+                        onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
                         className="input-field"
                         placeholder=""
                       />
@@ -342,36 +297,49 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
         </form>
       </div>
 
-      {showGreenBeanModal && (
-        <div className="batch-modal-overlay" onClick={() => setShowGreenBeanModal(false)}>
+      {showModal && (
+        <div className="batch-modal-overlay" onClick={() => setShowModal(false)}>
           <div className="batch-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{t('warehouse.selectGreenBean')}</h3>
-              <button onClick={() => setShowGreenBeanModal(false)}>×</button>
+              <h3>{t("warehouse.selectGreenBeanBatch")}</h3>
+              <button onClick={() => setShowModal(false)}>×</button>
             </div>
             <input
               type="text"
               className="batch-search"
-              placeholder={t('warehouse.searchGreenBeanPlaceholder')}
+              placeholder="Tìm kiếm batch..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               autoFocus
             />
             <div className="batch-list">
-              {filteredGreenBeans.map(gb => (
-                <div
-                  key={gb.uuid}
-                  className="batch-item"
-                  onClick={() => {
-                    handleRowChange(currentBatchIndex, 'selectedGreenBean', gb);
-                    setShowGreenBeanModal(false);
-                    setSearchTerm('');
-                  }}
-                >
-                  <div className="batch-name">{gb.green_bean_name}</div>
-                  <div className="batch-stock">Tồn kho: {Number(getAvailableStock(gb.uuid)).toFixed(2)}kg</div>
-                </div>
-              ))}
+              <table className="batch-table">
+                <thead>
+                  <tr>
+                    <th>Tên nhân xanh</th>
+                    <th>Ngày tạo</th>
+                    <th>Nhà cung cấp</th>
+                    <th>Tồn kho</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBatches.map(b => (
+                    <tr
+                      key={b.uuid}
+                      className="batch-row"
+                      onClick={() => {
+                        handleRowChange(currentBatchIndex, 'selectedBatch', b);
+                        setShowModal(false);
+                      }}
+                    >
+                      <td>{b.green_bean_name}</td>
+                      <td>{b.created_dt ? formatDateDisplay(b.created_dt.split('T')[0]) : 'N/A'}</td>
+                      <td>{b.vendor_name || 'N/A'}</td>
+                      <td>{Number(b.weight || 0).toFixed(2)}kg</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

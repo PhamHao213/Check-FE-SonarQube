@@ -3343,7 +3343,17 @@
     "created_date": "Created Date",
     "created_by": "Creator",
     "general_information": "General Information",
-    "detail_information": "Detailed Information"
+    "detail_information": "Detailed Information",
+    "greenBeanBatch": "Green Bean Batch",
+    "selectGreenBeanBatch": "Select Green Bean Batch",
+    "createWarehouseExport": "Create Warehouse Export Note",
+    "createImportNote": "Create Warehouse Import Note",
+    "createBatch": "Create New Batch",
+     "searchBatches": "Search Batches...",
+   "greenBeanname": "Green Bean Name",
+   "createdDate": "Created Date",
+   "suppliername": "Supplier Name",
+   "receiptCode": "Receipt Code"
   } ,
   "home page": {
     "coffee cupping management platform directly on the Website": "Coffee Cupping Management Platform Directly on the Website",
