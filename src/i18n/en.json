@@ -3353,7 +3353,14 @@
    "greenBeanname": "Green Bean Name",
    "createdDate": "Created Date",
    "suppliername": "Supplier Name",
-   "receiptCode": "Receipt Code"
+   "receiptCode": "Receipt Code",
+   "vendor":"Vendor",
+   "inventory":"Inventory",
+   "unit":"Unit",
+   "selectGreenBeanBatchToast": "Please select a green bean batch for row {{row}}",
+   "enterWeightToast": "Please enter the weight for row {{row}}",
+   "exportSlipCreatedSuccess": "Export slip created successfully"
+
   } ,
   "home page": {
     "coffee cupping management platform directly on the Website": "Coffee Cupping Management Platform Directly on the Website",

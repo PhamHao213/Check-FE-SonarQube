@@ -163,7 +163,7 @@
 
 .homepage__language-switcher:hover {
   transform: scale(1.1);
-  color: #1F429B;
+  /* color: #1F429B; */
 }
 
 .homepage__language-switcher::after {
@@ -200,7 +200,7 @@
 }
 
 .homepage__start-btn:hover {
-  background: #1F429B;
+  /* background: #1F429B; */
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(31, 66, 155, 0.4);
 }
@@ -467,13 +467,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1F429B;
+  /* background: #1F429B; */
   border-radius: 5px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4A6FCF;
+  /* background: #4A6FCF; */
 }
 
 /* Animation cho phần tử khi xuất hiện */
