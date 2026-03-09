@@ -26,7 +26,8 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
   const [sortOrder, setSortOrder] = useState('newest');
   const [filters, setFilters] = useState({
     startDate: '',
-    endDate: ''
+    endDate: '',
+    ticketType: ''
   });
 
   useEffect(() => {
@@ -102,6 +103,12 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
   };
 
   const allTickets = [...importTickets, ...exportTickets]
+    .filter(ticket => {
+      if (filters.ticketType === '') return true;
+      if (filters.ticketType === 'import') return ticket.ticket_type === true || ticket.ticket_type === 1 || ticket.ticket_type === '1';
+      if (filters.ticketType === 'export') return ticket.ticket_type === false || ticket.ticket_type === 0 || ticket.ticket_type === '0';
+      return true;
+    })
     .sort((a, b) => {
       const dateA = new Date(a.created_date);
       const dateB = new Date(b.created_date);
@@ -179,7 +186,7 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
             </button>
             <button className="sort-btn" onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}>
               <SortIcon size={14} color="#666" />
-              {t('warehouse.date')}: ({sortOrder === 'newest' ? t('vendor.newest') : t('vendor.oldest')})
+              {t('warehouse.date')}: {sortOrder === 'newest' ? t('warehouse.descending') : t('warehouse.ascending')}
             </button>
           </div>
         </div>

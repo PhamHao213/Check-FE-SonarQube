@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { inventoryApi } from '../../api/inventoryApi';
 import { API_BASE_URL } from '../../api/config';
+import { showToast } from '../../components/Toast/Toast';
 import './Warehouse.css';
 
 const WarehouseDetail = ({ selectedContext }) => {
@@ -66,17 +67,6 @@ const WarehouseDetail = ({ selectedContext }) => {
     }
   };
 
-  const hasPermission = (permission) => {
-    const isOwner = userRole === 'owner';
-    const isAdmin = userRole === 'admin';
-    const hasExplicitPermission = userPermissions.includes(permission);
-    const result = isOwner || isAdmin || hasExplicitPermission;
-
-
-
-    return result;
-  };
-
   const loadBatches = async () => {
     try {
       const { batchApi } = await import('../../api/batchApi');
@@ -98,7 +88,7 @@ const WarehouseDetail = ({ selectedContext }) => {
       } else {
         ticketData = response.data;
       }
-      console.log('✅ Ticket data:', ticketData);
+      console.log('Ticket data:', ticketData);
       setTicket(ticketData);
       
       // Load creator name - use current user since they created it
@@ -114,7 +104,7 @@ const WarehouseDetail = ({ selectedContext }) => {
     try {
       const { userApi } = await import('../../api/userApi');
       const response = await userApi.getCurrentUser();
-      console.log('✅ Current user response:', response);
+      console.log('Current user response:', response);
       const user = response.data || response;
       let name = '-';
       if (user.user_firstname && user.user_lastname) {
@@ -124,10 +114,10 @@ const WarehouseDetail = ({ selectedContext }) => {
       } else if (user.username) {
         name = user.username;
       }
-      console.log('✅ Creator name:', name);
+      console.log('Creator name:', name);
       setCreatorName(name);
     } catch (error) {
-      console.error('❌ Error loading creator:', error);
+      console.error('Error loading creator:', error);
       setCreatorName('-');
     }
   };
@@ -142,7 +132,7 @@ const WarehouseDetail = ({ selectedContext }) => {
       navigate(-1);
     } catch (error) {
       console.error('Error deleting ticket:', error);
-      alert(t('warehouse.deleteError'));
+      showToast(t('warehouse.deleteError'), 'error');
     }
   };
 
@@ -155,31 +145,10 @@ const WarehouseDetail = ({ selectedContext }) => {
       await inventoryApi.cancelTicket(ticket_id);
       setTicket(prev => ({ ...prev, is_cancel: true, is_cancelled: true }));
       setShowCancelTooltip(false);
-      alert(t('warehouse.cancelSuccess'));
+      showToast(t('warehouse.cancelSuccess'), 'success');
     } catch (error) {
-      console.error('❌ Error canceling ticket:', error);
-      alert(error.message || t('warehouse.cancelError'));
-    }
-  };
-
-  const handleUpdate = async (formData) => {
-
-    try {
-      if (ticket.ticket_type) {
-
-        const response = await inventoryApi.updateImportTicket(ticket_id, formData);
-
-      } else {
-
-        const response = await inventoryApi.updateExportTicket(ticket_id, formData);
-
-      }
-      setShowEditModal(false);
-      loadTicketDetail();
-      loadBatches();
-    } catch (error) {
-      console.error('❌ Error updating ticket:', error);
-      alert(t('warehouse.updateError'));
+      console.error('Error canceling ticket:', error);
+      showToast(error.message || t('warehouse.cancelError'), 'error');
     }
   };
 
@@ -228,18 +197,6 @@ const WarehouseDetail = ({ selectedContext }) => {
             </div>
           </div>
           <div className="warehouse-detail-actions">
-            <button
-              className="action-btn"
-              onClick={() => setShowEditModal(true)}
-              style={{ background: '#0158A4' }}
-              title={t('warehouse.editTicketTooltip')}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              {t('common.edit')}
-            </button>
             <div style={{ position: 'relative' }}>
               <button
                 className="action-btn"
@@ -371,7 +328,7 @@ const WarehouseDetail = ({ selectedContext }) => {
                   .map((detail, idx) => (
                     <tr key={idx}>
                       <td>{detail.green_bean_name || '-'}</td>
-                      <td>{detail.quantity} kg</td>
+                      <td>{detail.quantity} {detail.unit || 'kg'}</td>
                       {detail.reason && (
                         <td>{translateReason(detail.reason)}</td>
                       )}
@@ -389,7 +346,7 @@ const WarehouseDetail = ({ selectedContext }) => {
                 disabled={currentPage === 1}
                 className="pagination-btn"
               >
-                Trước
+                {t('auto.trc_510')}
               </button>
               <span className="pagination-info">
                 Trang {currentPage} / {Math.ceil(ticket.details.length / itemsPerPage)}
@@ -399,65 +356,12 @@ const WarehouseDetail = ({ selectedContext }) => {
                 disabled={currentPage === Math.ceil(ticket.details.length / itemsPerPage)}
                 className="pagination-btn"
               >
-                Tiếp
+                {t('auto.trc_510')}
               </button>
             </div>
           )}
         </div>
       </div>
-
-      {showEditModal && ticket && (
-        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{t('warehouse.editTicket')}</h2>
-              <button className="close-btn" onClick={() => setShowEditModal(false)}>×</button>
-            </div>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = {
-                created_date: e.target.created_date.value
-              };
-              if (!ticket.ticket_type) {
-                formData.reason = e.target.reason.value;
-              }
-              handleUpdate(formData);
-            }}>
-              <div className="form-group">
-                <label>{t('warehouse.date')}</label>
-                <input
-                  type="date"
-                  name="created_date"
-                  defaultValue={ticket.created_date?.split('T')[0]}
-                  required
-                />
-              </div>
-              {!ticket.ticket_type && (
-                <div className="form-group">
-                  <label>{t('warehouse.reason')}</label>
-                  <select
-                    name="reason"
-                    defaultValue={ticket.details?.[0]?.reason || 'sales'}
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #D1D5DB' }}
-                  >
-                    <option value="sales">{t('warehouse.sales')}</option>
-                    <option value="raw_materials">{t('warehouse.rawMaterials')}</option>
-                    <option value="quality_control">{t('warehouse.qualityControl')}</option>
-                  </select>
-                </div>
-              )}
-              <div className="modal-actions">
-                <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>
-                  {t('common.cancel')}
-                </button>
-                <button type="submit" className="submit-btn">
-                  {t('common.save')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {showDeleteConfirm && (
         <div style={{

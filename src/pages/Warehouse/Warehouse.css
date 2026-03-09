@@ -566,20 +566,24 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: white;
-  border: 1px solid #D1D5DB;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(121, 121, 121, 0.3);
   border-radius: 8px;
-  color: #374151;
+  color: #797979;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 20px;
+  margin-top: 20px;
+  /* margin-left: 16px; */
+  text-decoration: none;
+  width: fit-content;
 }
 
 .warehouse-detail-back-button:hover {
-  background-color: #F3F4F6;
-  border-color: #9CA3AF;
+  background-color: rgba(121, 121, 121, 0.05);
+  border-color: #797979;
 }
 
 .warehouse-detail-back-button svg {
