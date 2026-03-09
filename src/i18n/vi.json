@@ -3365,7 +3365,14 @@
      "greenBeanname": "Tên nhân xanh",
    "createdDate": "Ngày tạo",
    "suppliername": "Nhà cung cấp",
-   "receiptCode": "Mã phiếu"
+   "receiptCode": "Mã phiếu",
+   "vendor":"Nhà cung cấp",
+   "inventory":"Tồn kho",
+   "unit":"Đơn vị tính",
+   "selectGreenBeanBatchToast": "Vui lòng chọn batch nhân xanh cho dòng {{row}}",
+    "enterWeightToast": "Vui lòng nhập khối lượng cho dòng {{row}}",
+    "exportSlipCreatedSuccess": "Tạo phiếu xuất kho thành công"
+   
   },
   "home page": {
     "coffee cupping management platform directly on the Website": "Nền Tảng Quản Lý Cupping Cà Phê Trực Tiếp Trên Website",

@@ -443,12 +443,16 @@
 .create-export-form .batch-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
+  min-width: 600px;
 }
 
 .create-export-form .batch-table thead {
   background-color: #f8f9fa;
   border-bottom: 2px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .create-export-form .batch-table th {
@@ -457,18 +461,44 @@
   font-weight: 600;
   color: #495057;
   border: 1px solid #dee2e6;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  position: relative;
+  resize: horizontal;
+  overflow: auto;
+  min-width: 100px;
+  background-color: #f8f9fa;
+}
+
+.create-export-form .batch-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 11;
+  background-color: #f8f9fa;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .create-export-form .batch-table td {
   padding: 10px 8px;
   border: 1px solid #dee2e6;
   vertical-align: middle;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 300px;
+  background-color: white;
+}
+
+.create-export-form .batch-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 9;
+  background-color: white;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+}
+
+.create-export-form .batch-row:hover td:first-child {
+  background-color: #f8f9fa;
 }
 
 .create-export-form .batch-row {

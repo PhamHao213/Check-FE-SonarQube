@@ -25,6 +25,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
   const [rows, setRows] = useState([{
     selectedBatch: null,
     quantity: '',
+    unit: 'Kg',
     reason: 'sales'
   }]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -33,6 +34,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
     setRows([...rows, {
       selectedBatch: null,
       quantity: '',
+      unit: 'Kg',
       reason: 'sales'
     }]);
   };
@@ -118,11 +120,11 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
 
     for (let i = 0; i < rows.length; i++) {
       if (!rows[i].selectedBatch) {
-        showToast(`Vui lòng chọn batch nhân xanh cho dòng ${i + 1}`, 'error');
+        showToast(t('warehouse.selectGreenBeanBatchToast', { row: i + 1 }), 'error');
         return;
       }
       if (!rows[i].quantity) {
-        showToast(`Vui lòng nhập khối lượng cho dòng ${i + 1}`, 'error');
+        showToast(t('warehouse.enterWeightToast', { row: i + 1 }), 'error');
         return;
       }
     }
@@ -134,6 +136,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
       const batchesForExport = rows.map(row => ({
         batch_id: row.selectedBatch.uuid,
         quantity: parseFloat(row.quantity),
+        unit: row.unit,
         reason: row.reason
       }));
 
@@ -144,7 +147,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
       };
 
       await inventoryApi.createExportTicket(exportPayload);
-      showToast('Tạo phiếu xuất kho thành công', 'success');
+      showToast(t('warehouse.exportSlipCreatedSuccess'), 'success');
       if (onBack) onBack();
     } catch (error) {
       console.error('Error creating export ticket:', error);
@@ -178,7 +181,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                   value={nextTicketCode}
                   readOnly
                   className="readonly-input"
-                  placeholder="Đang tải..."
+                  placeholder="Loading..."
                 />
               </div>
               <div className="info-field">
@@ -207,7 +210,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                   ) : ''}
                   readOnly
                   className="readonly-input"
-                  placeholder="Đang tải..."
+                  placeholder="Loading..."
                 />
               </div>
             </div>
@@ -225,6 +228,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                 <tr>
                   <th>{t("warehouse.greenBeanBatch")}</th>
                   <th>{t('warehouse.weight')}</th>
+                  <th>{t('warehouse.unit')}</th>
                   <th>{t('warehouse.reason')}</th>
                   <th></th>
                 </tr>
@@ -252,6 +256,16 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                         className="input-field"
                         placeholder=""
                       />
+                    </td>
+                    <td>
+                      <select
+                        value={row.unit || 'Kg'}
+                        onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
+                        className="select-field"
+                      >
+                        <option value="Kg">Kg</option>
+                        <option value="Gram">Gram</option>
+                      </select>
                     </td>
                     <td>
                       <select
@@ -307,7 +321,7 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
             <input
               type="text"
               className="batch-search"
-              placeholder="Tìm kiếm batch..."
+              placeholder={t("warehouse.searchBatches")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               autoFocus
@@ -316,10 +330,11 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
               <table className="batch-table">
                 <thead>
                   <tr>
-                    <th>Tên nhân xanh</th>
-                    <th>Ngày tạo</th>
-                    <th>Nhà cung cấp</th>
-                    <th>Tồn kho</th>
+                    <th>{t('warehouse.greenBeanname')}</th>
+                    <th>{t('warehouse.createdDate')}</th>
+                    <th>{t('warehouse.vendor')}</th>
+                    <th>{t('warehouse.inventory')}</th>
+                    <th>{t('warehouse.unit')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -335,7 +350,8 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
                       <td>{b.green_bean_name}</td>
                       <td>{b.created_dt ? formatDateDisplay(b.created_dt.split('T')[0]) : 'N/A'}</td>
                       <td>{b.vendor_name || 'N/A'}</td>
-                      <td>{Number(b.weight || 0).toFixed(2)}kg</td>
+                      <td>{Number(b.weight || 0).toFixed(2)}</td>
+                      <td>{b.unit || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
