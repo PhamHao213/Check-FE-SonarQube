@@ -9,7 +9,14 @@ const FilterModal = ({ isOpen, onClose, onApply, initialFilters = {}, filterType
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const getInitialFilters = () => {
-    if (filterType === 'greenbean') {
+    if (filterType === 'warehouse') {
+      return {
+        startDate: '',
+        endDate: '',
+        ticketType: '',
+        ...initialFilters
+      };
+    } else if (filterType === 'greenbean') {
       return {
         startDate: '',
         endDate: '',
@@ -115,6 +122,17 @@ const FilterModal = ({ isOpen, onClose, onApply, initialFilters = {}, filterType
               placeholder={t('auto.chn_khong_thi_g_155')}
             />
           </div>
+
+          {filterType === 'warehouse' && (
+            <div className="filter-group">
+              <label>{t('warehouse.type')}</label>
+              <select name="ticketType" value={filters.ticketType} onChange={handleChange}>
+                <option value="">{t('warehouse.allTypes')}</option>
+                <option value="import">{t('warehouse.import1')}</option>
+                <option value="export">{t('warehouse.export1')}</option>
+              </select>
+            </div>
+          )}
 
           {filterType === 'session' && (
             <>

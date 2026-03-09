@@ -151,7 +151,6 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
       if (onBack) onBack();
     } catch (error) {
       console.error('Error creating export ticket:', error);
-      showToast(error.message || 'Có lỗi xảy ra khi tạo phiếu xuất kho', 'error');
     }
   };
 
@@ -226,10 +225,10 @@ const CreateExportForm = ({ onBack, selectedContext }) => {
             <table>
               <thead>
                 <tr>
-                  <th>{t("warehouse.greenBeanBatch")}</th>
-                  <th>{t('warehouse.weight')}</th>
-                  <th>{t('warehouse.unit')}</th>
-                  <th>{t('warehouse.reason')}</th>
+                  <th>{t("warehouse.greenBeanBatch")}<span className="required"> *</span></th>
+                  <th>{t('warehouse.weight')}<span className="required"> *</span></th>
+                  <th>{t('warehouse.unit')}<span className="required"> *</span></th>
+                  <th>{t('warehouse.reason')}<span className="required"> *</span></th>
                   <th></th>
                 </tr>
               </thead>
