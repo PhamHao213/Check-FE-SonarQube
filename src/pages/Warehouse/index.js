@@ -24,6 +24,7 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [sortOrder, setSortOrder] = useState('newest');
+  const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
@@ -109,6 +110,24 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
       if (filters.ticketType === 'export') return ticket.ticket_type === false || ticket.ticket_type === 0 || ticket.ticket_type === '0';
       return true;
     })
+    .filter(ticket => {
+      if (!searchQuery.trim()) return true;
+      const query = searchQuery.toLowerCase();
+      
+      // Tìm trong ticket code
+      if (ticket.ticket_code?.toLowerCase().includes(query)) return true;
+      
+      // Tìm trong details
+      if (ticket.details && Array.isArray(ticket.details)) {
+        return ticket.details.some(detail => {
+          const greenBeanName = detail.green_bean_name?.toLowerCase() || '';
+          const batchCode = detail.batch_code?.toLowerCase() || '';
+          return greenBeanName.includes(query) || batchCode.includes(query);
+        });
+      }
+      
+      return false;
+    })
     .sort((a, b) => {
       const dateA = new Date(a.created_date);
       const dateB = new Date(b.created_date);
@@ -177,6 +196,8 @@ const Warehouse = ({ selectedContext, onDisableOrgSwitch }) => {
               type="text"
               placeholder={t('warehouse.searchPlaceholder')}
               className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="warehouse-filters">
